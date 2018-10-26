@@ -6,3 +6,5 @@
 .idea/
 src/config.js
 database
+*.ignoreme*
+

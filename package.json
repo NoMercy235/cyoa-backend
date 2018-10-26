@@ -1,0 +1,40 @@
+{
+  "name": "cyoa-backend",
+  "version": "1.0.0",
+  "description": "The backend server for the CYOA project of the Time Travelers Anonymous party.",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NoMercy235/cyoa-backend.git"
+  },
+  "author": "Alexandru Florian Barascu <alex.florin235@yahoo.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^3.0.2",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "jsonwebtoken": "^8.3.0",
+    "moment": "^2.20.1",
+    "mongoose": "^4.13.9",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.15.0",
+    "hoek": "^4.2.1",
+    "nodemon": "^1.18.4"
+  },
+  "bugs": {
+    "url": "https://github.com/NoMercy235/cyoa-backend/issues"
+  },
+  "homepage": "https://github.com/NoMercy235/cyoa-backend#readme",
+  "keywords": [
+    "cyoa",
+    "story"
+  ]
+}

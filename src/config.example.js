@@ -1,4 +1,4 @@
 module.exports = {
     'secret': 'secret',
-    'database': 'mongodb://url'
+    'database': 'mongodb://url',
 };

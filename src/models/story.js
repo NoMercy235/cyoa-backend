@@ -9,7 +9,7 @@ const schema = new mongoose.Schema(
         description: { type: String, required: true },
         tags: { type: [String], required: true },
 
-        author: { type: String, ref: USER },
+        author: { type: String, ref: USER, required: true },
         // startSeq: { type: [String], required: true },
     },
     {
@@ -18,11 +18,11 @@ const schema = new mongoose.Schema(
 );
 
 schema.statics.getAllowedFilters = function () {
-    return ['title', '_creator', 'categories', 'scores', 'created_at'];
+    return ['name', 'tags', 'author'];
 };
 
 schema.statics.getAllowedSort = function () {
-    return ['title', 'scores', 'created_at'];
+    return ['name'];
 };
 
 module.exports = {

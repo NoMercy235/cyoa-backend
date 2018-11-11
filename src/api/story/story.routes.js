@@ -3,8 +3,8 @@ const controller = require('./story.controller');
 
 router.get('/', controller.get);
 router.post('/', controller.create);
-router.get('/:email', controller.getOne);
-router.put('/:email', controller.update);
-router.delete('/:email', controller.remove);
+router.get('/:id', controller.getOne);
+router.put('/:id', controller.update);
+router.delete('/:id', controller.remove);
 
 module.exports = router;

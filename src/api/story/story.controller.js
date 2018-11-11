@@ -12,6 +12,10 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push((req, item) 
     item.author = req.user._id;
 });
 
+storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((query) => {
+    query.populate({ path: 'author', select: [ 'email', 'firstName', 'lastName' ] });
+});
+
 module.exports = {
     get: storyCtrl.get(),
     getOne: storyCtrl.getOne(),

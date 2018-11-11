@@ -5,17 +5,19 @@ const MODEL = MODEL_NAMES.story;
 const mongoose = require('mongoose');
 const schema = new mongoose.Schema(
     {
-        name: { type: String, required: true, index: { unique: true } },
+        name: { type: String, required: true },
         description: { type: String, required: true },
         tags: { type: [String], required: true },
 
         author: { type: String, ref: USER, required: true },
-        // startSeq: { type: [String], required: true },
+        startSeq: { type: String },
     },
     {
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
     }
 );
+
+schema.index({ name: 1, author: 1 }, { unique: true });
 
 schema.statics.getAllowedFilters = function () {
     return ['name', 'tags', 'author'];

@@ -75,8 +75,8 @@ class BaseController {
 
             this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].forEach(cb => cb(query));
             query.exec().then((item) => {
-                    this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].forEach(cb => cb(res, item));
-                    res.status(constants.HTTP_CODES.OK).json(item);
+                this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].forEach(cb => cb(res, item));
+                res.status(constants.HTTP_CODES.OK).json(item);
             }).catch((err) => {
                 res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
             });

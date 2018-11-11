@@ -7,7 +7,7 @@ let controller = {};
 
 controller.authenticate = (req, res) => {
     User.findOne({
-        email: req.body.email
+        email: req.body.email,
     }, (err, user) => {
         if (err) throw err;
         if (!user || !user.comparePassword(req.body.password)) {

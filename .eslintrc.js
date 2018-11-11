@@ -2,6 +2,7 @@ module.exports = {
     "extends": "eslint:recommended",
     "env": {
         "node": true,
+        "es6": true,
     },
     "rules": {
         // override default options
@@ -18,7 +19,7 @@ module.exports = {
         "no-inline-comments": "off",
     },
     "parserOptions": {
-        "ecmaVersion": 7,
+        "ecmaVersion": 8,
         "ecmaFeatures": {
             "experimentalObjectRestSpread": true
         }

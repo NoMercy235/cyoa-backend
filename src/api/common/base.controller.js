@@ -102,6 +102,17 @@ class BaseController {
             }
         }
     }
+
+    createCustomHandler (cb) {
+        return async (req, res) => {
+            try {
+                const result = await cb(req, res);
+                res.status(constants.HTTP_CODES.OK).json(result);
+            } catch (err) {
+                res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
+            }
+        }
+    }
 }
 
 module.exports = BaseController;

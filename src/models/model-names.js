@@ -3,4 +3,5 @@ module.exports = {
     story: 'Story',
     sequence: 'Sequence',
     attribute: 'Attribute',
+    player: 'Player',
 };

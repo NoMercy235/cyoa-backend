@@ -5,5 +5,6 @@ module.exports = {
         story: { prefix: '/api/story', routes: require('./story/story.routes') },
         sequence: { prefix: '/api/sequence', routes: require('./sequence/sequence.routes') },
         attribute: { prefix: '/api/attribute', routes: require('./attribute/attribute.routes') },
+        player: { prefix: '/api/player', routes: require('./player/player.routes') },
     },
 };

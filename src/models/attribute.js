@@ -27,6 +27,10 @@ schema.statics.getAllowedSort = function () {
     return ['name'];
 };
 
+schema.statics.forPlayer = function (att) {
+    return { name: att.name, value: att.startValue };
+};
+
 module.exports = {
     model: mongoose.model(MODEL, schema),
     key: MODEL,

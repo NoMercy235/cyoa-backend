@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 
+// For debugging
+// mongoose.set('debug', true);
+
 const config = require('./config');
 const passportConfig = require('./middleware/passport');
 

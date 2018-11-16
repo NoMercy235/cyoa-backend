@@ -24,10 +24,25 @@ async function getOrCreate (req) {
     return player;
 }
 
+async function updateAttributes (req) {
+    const query = { _id: req.params.id };
+    const player = await Player.findOne(query).exec();
+    const newAttributes = req.body;
 
+    player.attributes.forEach((att, index) => {
+        const newAtt = newAttributes.find(a => a.name === att.name);
+        if (newAtt) {
+            att.value = newAtt.value;
+        }
+        player.attributes.set(index, att);
+    });
+    await player.save();
+    return player;
+}
 
 module.exports = {
     getOrCreate: playerCtrl.createCustomHandler(getOrCreate),
+    updateAttributes: playerCtrl.createCustomHandler(updateAttributes),
     get: playerCtrl.get(),
     getOne: playerCtrl.getOne(),
     create: playerCtrl.create(),

@@ -8,7 +8,7 @@ const schema = new mongoose.Schema(
     {
         story: { type: String, ref: STORY },
         user: { type: String, ref: USER },
-        attributes: { type: [{ name: String, value: Number, _id: false }] },
+        attributes: { type: Array },
     },
     {
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

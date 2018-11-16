@@ -95,6 +95,7 @@ class BaseController {
             try {
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].map(cb => cb(query)));
                 const item = await query.exec();
+                if (!exists(res, item)) return;
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_REMOVE].map(cb => cb(res, item)));
                 res.status(constants.HTTP_CODES.OK).json(item);
             } catch (err) {

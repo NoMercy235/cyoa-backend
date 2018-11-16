@@ -7,14 +7,12 @@ It will allow the users to both create and view stories written in the CYOA-styl
 
 Backend features:
 
-- [x] JWT authentication with passport.js.
-- [ ] User stories
-    - [ ] Create the story
-    - [ ] Create the sequences
-    - [ ] Order sequences
-- [ ] Story view
-    - [ ] Basic sequential view of a story's sequences
-    - [ ] Rate/feedback after reading a story
+- [x] Register/login users (use JWT for authentication)
+- [x] Main resources
+    - [x] CRUD for story
+    - [x] CRUD the sequences
+    - [x] CRUD for attributes of a story
+    - [x] CRUD for player
 
 
 Getting Started

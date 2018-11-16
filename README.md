@@ -13,7 +13,9 @@ Backend features:
     - [x] CRUD the sequences
     - [x] CRUD for attributes of a story
     - [x] CRUD for player
-
+- [x] Copy the story's attributes with their default value to the player when a user starts reading a story for the first time.
+- [ ] Create options with consequences on a sequence.
+- [ ] Create lose condition for stories.
 
 Getting Started
 ---------------

@@ -30,9 +30,9 @@ class BaseController {
             query = this.filter.applySorting(req, query);
             query = this.filter.applyPagination(req, query);
             try {
-                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].map(cb => cb(query)));
+                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].map(cb => cb(req, query)));
                 const items = await query.exec();
-                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_GET].map(cb => cb(res, items)));
+                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_GET].map(cb => cb(req, items)));
                 res.json(items);
             } catch (err) {
                 res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
@@ -44,10 +44,10 @@ class BaseController {
         return async (req, res) => {
             let query = this.Resource.findOne(this.findByCb(req));
             try {
-                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].map(cb => cb(query)));
+                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].map(cb => cb(req, query)));
                 const item = await query.exec();
                 if (!exists(res, item)) return;
-                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_GET_ONE].map(cb => cb(res, item)));
+                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_GET_ONE].map(cb => cb(req, item)));
                 res.json(item);
             } catch (err) {
                 res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
@@ -69,6 +69,23 @@ class BaseController {
         }
     }
 
+    createMany () {
+        return async (req, res) => {
+            let items = req.body;
+            try {
+                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE_MANY].map(cb => cb(req, items)));
+                const dbItems = await Promise.all(items.map(async item => {
+                    const resourceItem = this.Resource(item);
+                    return await resourceItem.save();
+                }));
+                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE_MANY].map(cb => cb(req, dbItems)));
+                res.json(dbItems);
+            } catch (err) {
+                res.status(constants.HTTP_CODES.BAD_REQUEST).json(err);
+            }
+        }
+    }
+
     update (userOptions) {
         const options = userOptions || { new: true, runValidators: true };
 
@@ -76,10 +93,10 @@ class BaseController {
             const updateFields = this.Resource.updateFields ? this.Resource.updateFields(req.body) : req.body;
             let query = this.Resource.findOneAndUpdate(this.findByCb(req), { $set: updateFields }, options);
             try {
-                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].map(cb => cb(query)));
+                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].map(cb => cb(req, query)));
                 const item = await query.exec();
                 if (!exists(res, item)) return;
-                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].map(cb => cb(res, item)));
+                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].map(cb => cb(req, item)));
                 res.status(constants.HTTP_CODES.OK).json(item);
             } catch (err) {
                 res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
@@ -93,10 +110,10 @@ class BaseController {
         return async (req, res) => {
             let query = this.Resource.findOneAndRemove(this.findByCb(req), options);
             try {
-                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].map(cb => cb(query)));
+                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].map(cb => cb(req, query)));
                 const item = await query.exec();
                 if (!exists(res, item)) return;
-                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_REMOVE].map(cb => cb(res, item)));
+                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_REMOVE].map(cb => cb(req, item)));
                 res.status(constants.HTTP_CODES.OK).json(item);
             } catch (err) {
                 res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);

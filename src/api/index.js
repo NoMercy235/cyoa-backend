@@ -4,6 +4,7 @@ module.exports = {
         user: { prefix: '/api/user', routes: require('./user/user.routes') },
         story: { prefix: '/api/story', routes: require('./story/story.routes') },
         sequence: { prefix: '/api/sequence', routes: require('./sequence/sequence.routes') },
+        option: { prefix: '/api/option', routes: require('./option/option.routes') },
         attribute: { prefix: '/api/attribute', routes: require('./attribute/attribute.routes') },
         player: { prefix: '/api/player', routes: require('./player/player.routes') },
     },

@@ -1,5 +1,6 @@
 const MODEL_NAMES = require('./model-names');
 const STORY = MODEL_NAMES.story;
+const OPTION = MODEL_NAMES.option;
 const MODEL = MODEL_NAMES.sequence;
 
 const mongoose = require('mongoose');
@@ -7,17 +8,10 @@ const schema = new mongoose.Schema(
     {
         name: { type: String, required: true },
         content: { type: String, required: true },
+        isEnding: { type: Boolean, default: false },
 
         story: { type: String, ref: STORY },
-        prevSeq: { type: String, ref: MODEL },
-        nextSeq: { type: String, ref: MODEL },
-        consequence: {
-            type: {
-                attrName: String,
-                changeValue: Number,
-            },
-            required: true,
-        },
+        options: { type: [String], ref: OPTION },
     },
     {
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

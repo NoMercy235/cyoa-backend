@@ -4,7 +4,7 @@ FROM node:carbon
 LABEL authors="Alexandru Florian Barascu <alex.florin235@yahoo.com>"
 MAINTAINER alex.florin235@yahoo.com
 
-ENV PORT=4208
+ENV PORT=8080
 
 # Set work directory to /src
 WORKDIR /src
@@ -13,7 +13,7 @@ WORKDIR /src
 COPY . /src
 
 # Install app dependencies
-RUN npm install
+RUN rm package-lock.json && npm install
 
 EXPOSE $PORT
 

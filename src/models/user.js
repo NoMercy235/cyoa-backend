@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const MODEL_NAMES = require('./model-names');
 const MODEL = MODEL_NAMES.user;
-const uniqueValidator = require('mongoose-unique-validator');
 
 const SALT_WORK_FACTOR = 10;
 
@@ -14,8 +13,6 @@ const schema = new mongoose.Schema({
     isAdmin: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
 });
-
-schema.plugin(uniqueValidator, { message: 'The "{PATH}" must be unique: ({VALUE})' });
 
 schema.pre('save', function (next) {
     if (!this.isModified('password')) {

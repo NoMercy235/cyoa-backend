@@ -12,7 +12,7 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push((req, item) 
     item.author = req.user._id;
 });
 
-storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((query) => {
+storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query) => {
     query.populate({ path: 'author', select: [ 'email', 'firstName', 'lastName' ] });
 });
 

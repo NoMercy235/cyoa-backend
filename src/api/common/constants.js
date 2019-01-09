@@ -33,7 +33,8 @@ const HTTP_CODES = {
     NOT_IMPLEMENTED: 501,
 };
 
-const TOKEN_EXPIRE_TIME = 1440 * 60;
+// Expire in one month
+const TOKEN_EXPIRE_TIME = 60 * 60 * 24 * 30;
 
 module.exports = {
     HTTP_METHODS: HTTP_METHODS,

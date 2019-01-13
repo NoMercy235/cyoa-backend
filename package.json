@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon src/index.js",
-    "prep-database": "node scripts/seed-db.js && node scripts/create-tags.js"
+    "prep-database": "node scripts/seed-db.js && node scripts/create-tags.js",
+    "serve": "docker-compose down && docker-compose build --no-cache && docker-compose up -d"
   },
   "repository": {
     "type": "git",

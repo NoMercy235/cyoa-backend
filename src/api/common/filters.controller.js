@@ -1,9 +1,10 @@
 const mapFilter = {
     'like': (query, field, val) => query.find({[field]: { $regex: '.*' + val + '.*' }}),
-    '<': (query, field, val) => query.find({[field]: { $lt: val }}),
-    '<=': (query, field, val) => query.find({[field]: { $lte: val }}),
-    '>': (query, field, val) => query.find({[field]: { $gt: val }}),
-    '>=': (query, field, val) => query.find({[field]: { $gte: val }}),
+    'equals': (query, field, val) => query.find({[field]: val }),
+    'lt': (query, field, val) => query.find({[field]: { $lt: val }}),
+    'lte': (query, field, val) => query.find({[field]: { $lte: val }}),
+    'gt': (query, field, val) => query.find({[field]: { $gt: val }}),
+    'gte': (query, field, val) => query.find({[field]: { $gte: val }}),
     'in': (query, field, val) => query.find({[field]: { $in: val }}),
 };
 
@@ -17,12 +18,13 @@ class Filter {
     applyFilters(req, query) {
         if (!req.query.filter) return query;
 
-        Object.keys(req.query.filter).forEach((key) => {
-            if (this.allowedFields.indexOf(key) !== -1) {
-                const filter = req.query.filter[key];
-                query = mapFilter[filter.op](query, key, filter.val);
-            }
-        });
+        Object.keys(req.query.filter)
+            .filter((key) => this.allowedFields.find(k => k === key))
+            .map((key) => ({ key, filter: req.query.filter[key] }))
+            .filter(({ filter }) =>  filter.value)
+            .forEach(({ key, filter }) => {
+                query = mapFilter[filter.op](query, key, filter.value);
+            });
         return query;
     }
 

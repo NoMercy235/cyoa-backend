@@ -8,5 +8,6 @@ module.exports = {
         option: { prefix: '/api/option', routes: require('./option/option.routes') },
         attribute: { prefix: '/api/attribute', routes: require('./attribute/attribute.routes') },
         player: { prefix: '/api/player', routes: require('./player/player.routes') },
+        tag: { prefix: '/api/tag', routes: require('./tags/tags.routes') },
     },
 };

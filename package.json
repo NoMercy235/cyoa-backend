@@ -4,7 +4,8 @@
   "description": "The backend server for the CYOA project of the Time Travelers Anonymous party.",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "nodemon src/index.js",
+    "prep-database": "node scripts/seed-db.js && node scripts/create-tags.js"
   },
   "repository": {
     "type": "git",

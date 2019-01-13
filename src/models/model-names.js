@@ -6,4 +6,5 @@ module.exports = {
     option: 'Option',
     attribute: 'Attribute',
     player: 'Player',
+    tag: 'Tag',
 };

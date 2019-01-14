@@ -20,8 +20,13 @@ class Filter {
 
         Object.keys(req.query.filter)
             .filter((key) => this.allowedFields.find(k => k === key))
-            .map((key) => ({ key, filter: req.query.filter[key] }))
-            .filter(({ filter }) =>  filter.value)
+            .map((key) => {
+                const filter = req.query.filter[key];
+                return { key, filter, options: filter.options ? JSON.parse(filter.options) : {} };
+            })
+            .filter(({ filter, options }) =>  {
+                return options && options.allowEmpty ? true : filter.value;
+            })
             .forEach(({ key, filter }) => {
                 query = mapFilter[filter.op](query, key, filter.value);
             });

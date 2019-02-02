@@ -21,6 +21,20 @@ collectionsCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req,
     query.populate({ path: 'stories', select: ['_id', 'name', 'author', 'description', 'tags'] });
 });
 
+collectionsCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, item) => {
+    await checkAuthor(req, item);
+});
+
+collectionsCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req, item) => {
+    await checkAuthor(req, item);
+});
+
+async function checkAuthor(req, item) {
+    if (item.author === req.user._id) {
+        throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
+    }
+}
+
 module.exports = {
     get: collectionsCtrl.get(),
     getOne: collectionsCtrl.getOne(),

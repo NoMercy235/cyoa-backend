@@ -26,6 +26,14 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE_MANY].push(async 
     });
 });
 
+optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {
+    await checkStory(req);
+});
+
+optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req) => {
+    await checkStory(req);
+});
+
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE_MANY].push(async (req, items) => {
     const sequence = await Sequence.findOne({ _id: req.params.sequence }).exec();
     sequence.options = items.map(i => i._id);
@@ -36,7 +44,7 @@ async function checkStory(req) {
     const sequence = await Sequence.findOne({ _id: req.params.sequence }).exec();
     const story = await Story.findOne({ _id: sequence.story }).exec();
     if (story.author !== req.user._id.toString()) {
-        throw { message: "Trying to create option(s) for a sequence which is part of a story you don't own." };
+        throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
     }
 }
 

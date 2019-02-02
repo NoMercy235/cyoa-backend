@@ -36,9 +36,14 @@ const HTTP_CODES = {
 // Expire in one month
 const TOKEN_EXPIRE_TIME = 60 * 60 * 24 * 30;
 
+const ERROR_MESSAGES = {
+    resourceNotOwned: 'You do not own this resource',
+};
+
 module.exports = {
-    HTTP_METHODS: HTTP_METHODS,
-    HTTP_TIMED_EVENTS: HTTP_TIMED_EVENTS,
-    HTTP_CODES: HTTP_CODES,
-    TOKEN_EXPIRE_TIME: TOKEN_EXPIRE_TIME,
+    HTTP_METHODS,
+    HTTP_TIMED_EVENTS,
+    HTTP_CODES,
+    TOKEN_EXPIRE_TIME,
+    ERROR_MESSAGES,
 };

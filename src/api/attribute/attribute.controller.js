@@ -10,12 +10,24 @@ const findByCb = function (req) {
 const sequenceCtrl = new BaseController(Attribute, findByCb);
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req, item) => {
-    const story = await Story.findOne({ _id: req.params.story }).exec();
-    if (story.author !== req.user._id.toString()) {
-        return Promise.reject({ error: "Trying to create an attribute for a story you don't own." });
-    }
+    await checkAuthor(req);
     item.story = req.params.story;
 });
+
+sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {
+    await checkAuthor(req);
+});
+
+sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req) => {
+    await checkAuthor(req);
+});
+
+async function checkAuthor(req) {
+    const story = await Story.findOne({ _id: req.params.story }).exec();
+    if (story.author !== req.user._id.toString()) {
+        throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
+    }
+}
 
 module.exports = {
     get: sequenceCtrl.get(),

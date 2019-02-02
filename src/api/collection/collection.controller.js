@@ -6,20 +6,25 @@ const findByCb = function (req) {
     return { _id: req.params.id };
 };
 
-const storyCtrl = new BaseController(Collection, findByCb);
+const collectionsCtrl = new BaseController(Collection, findByCb);
 
-storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push((req, item) => {
+collectionsCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push((req, item) => {
     item.author = req.user._id;
 });
 
-storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query) => {
+collectionsCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) => {
+    query = query.find({ author: req.user._id });
+    return query;
+});
+
+collectionsCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query) => {
     query.populate({ path: 'stories', select: ['_id', 'name', 'author', 'description', 'tags'] });
 });
 
 module.exports = {
-    get: storyCtrl.get(),
-    getOne: storyCtrl.getOne(),
-    create: storyCtrl.create(),
-    update: storyCtrl.update(),
-    remove: storyCtrl.remove(),
+    get: collectionsCtrl.get(),
+    getOne: collectionsCtrl.getOne(),
+    create: collectionsCtrl.create(),
+    update: collectionsCtrl.update(),
+    remove: collectionsCtrl.remove(),
 };

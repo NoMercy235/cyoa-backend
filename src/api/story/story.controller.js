@@ -12,6 +12,11 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push((req, item) 
     item.author = req.user._id;
 });
 
+storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) => {
+    query = query.find({ author: req.user._id });
+    return query;
+});
+
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query) => {
     query.populate({ path: 'author', select: [ 'email', 'firstName', 'lastName' ] });
 });

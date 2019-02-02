@@ -9,9 +9,9 @@ const schema = new mongoose.Schema(
 
         sequence: { type: String, ref: SEQUENCE },
         nextSeq: { type: String, ref: SEQUENCE },
-        consequence: {
+        consequences: {
             type: [{
-                attrName: String,
+                attribute: String,
                 changeValue: Number,
                 _id: false,
             }],

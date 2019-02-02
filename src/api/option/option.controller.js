@@ -14,12 +14,13 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push(async (req, qu
     query.find({ sequence: req.params.sequence });
 });
 
+optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req, item) => {
+    await checkStory(req);
+    item.sequence = req.params.sequence;
+});
+
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE_MANY].push(async (req, items) => {
-    const sequence = await Sequence.findOne({ _id: req.params.sequence }).exec();
-    const story = await Story.findOne({ _id: sequence.story }).exec();
-    if (story.author !== req.user._id.toString()) {
-        return Promise.reject({ error: "Trying to create option(s) for a sequence which is part of a story you don't own." });
-    }
+    await checkStory(req);
     items.forEach(item => {
         item.sequence = req.params.sequence;
     });
@@ -30,6 +31,14 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE_MANY].push(async (
     sequence.options = items.map(i => i._id);
     await sequence.save();
 });
+
+async function checkStory(req) {
+    const sequence = await Sequence.findOne({ _id: req.params.sequence }).exec();
+    const story = await Story.findOne({ _id: sequence.story }).exec();
+    if (story.author !== req.user._id.toString()) {
+        throw { message: "Trying to create option(s) for a sequence which is part of a story you don't own." };
+    }
+}
 
 module.exports = {
     get: optionCtrl.get(),

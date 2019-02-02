@@ -9,6 +9,11 @@ const findByCb = function (req) {
 
 const sequenceCtrl = new BaseController(Sequence, findByCb);
 
+sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) => {
+    query = query.find({ story: req.params.story });
+    return query;
+});
+
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req, item) => {
     const story = await Story.findOne({ _id: req.params.story }).exec();
     if (story.author !== req.user._id.toString()) {

@@ -11,7 +11,7 @@ const schema = new mongoose.Schema(
         isEnding: { type: Boolean, default: false },
 
         story: { type: String, ref: STORY },
-        options: { type: [String], ref: OPTION },
+        options: [{ type: String, ref: OPTION }],
     },
     {
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

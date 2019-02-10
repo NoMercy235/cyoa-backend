@@ -9,7 +9,15 @@ const findByCb = function (req) {
 const storyCtrl = new BaseController(Story, findByCb);
 
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query) => {
-    query.populate({ path: 'author', select: [ 'email', 'firstName', 'lastName' ] });
+    query
+        .populate({
+            path: 'startSeq',
+            select: [ 'name', 'content', 'isEnding' ],
+            populate: {
+                path: 'options',
+                select: [ 'action', 'consequences', 'nextSeq' ],
+            },
+        });
 });
 
 module.exports = {

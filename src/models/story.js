@@ -1,6 +1,8 @@
 const MODEL_NAMES = require('./model-names');
 const USER = MODEL_NAMES.user;
 const COLLECTION = MODEL_NAMES.collection;
+const SEQUENCE = MODEL_NAMES.sequence;
+const TAG = MODEL_NAMES.tag;
 const MODEL = MODEL_NAMES.story;
 
 const mongoose = require('mongoose');
@@ -9,11 +11,11 @@ const schema = new mongoose.Schema(
         name: { type: String, required: true },
         description: { type: String, required: true },
         authorShort: { type: String },
-        tags: { type: [String], required: true },
 
+        tags: [{ type: String, ref: TAG, required: true }],
         author: { type: String, ref: USER, required: true },
         fromCollection: { type: String, ref: COLLECTION, default: '' },
-        startSeq: { type: String },
+        startSeq: { type: String, ref: SEQUENCE },
     },
     {
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

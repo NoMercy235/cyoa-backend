@@ -78,7 +78,7 @@ class BaseController {
                     const resourceItem = this.Resource(item);
                     return await resourceItem.save();
                 }));
-                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE_MANY].map(cb => cb(req, dbItems)));
+                await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE_MANY].map(cb => cb(res, dbItems)));
                 res.json(dbItems);
             } catch (err) {
                 res.status(constants.HTTP_CODES.BAD_REQUEST).json(err);

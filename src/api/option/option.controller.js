@@ -19,11 +19,10 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req,
     item.sequence = req.params.sequence;
 });
 
-optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE_MANY].push(async (req, items) => {
-    await checkStory(req);
-    items.forEach(item => {
-        item.sequence = req.params.sequence;
-    });
+optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE].push(async (res, item) => {
+    const sequence = await Sequence.findOne({ _id: res.req.params.sequence }).exec();
+    sequence.options = item._id;
+    await sequence.save();
 });
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {
@@ -34,8 +33,15 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req)
     await checkStory(req);
 });
 
-optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE_MANY].push(async (req, items) => {
-    const sequence = await Sequence.findOne({ _id: req.params.sequence }).exec();
+optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE_MANY].push(async (req, items) => {
+    await checkStory(req);
+    items.forEach(item => {
+        item.sequence = req.params.sequence;
+    });
+});
+
+optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE_MANY].push(async (res, items) => {
+    const sequence = await Sequence.findOne({ _id: res.req.params.sequence }).exec();
     sequence.options = items.map(i => i._id);
     await sequence.save();
 });

@@ -11,31 +11,35 @@ const mapFilter = {
 class Filter {
     constructor(resource) {
         this.resource = resource;
+        this.defaultFilter = this.resource.getDefaultFilter ? this.resource.getDefaultFilter() : {};
+        this.defaultSort = this.resource.getDefaultSort ? this.resource.getDefaultSort() : {};
         this.allowedFields = this.resource.getAllowedFilters ? this.resource.getAllowedFilters() : [];
-        this.allowedSort = this.resource.getAllowedFilters ? this.resource.getAllowedFilters() : [];
+        this.allowedSort = this.resource.getAllowedSort ? this.resource.getAllowedSort() : [];
     }
 
     applyFilters(req, query) {
-        if (!req.query.filter) return query;
+        const filter = req.query.filter || this.defaultFilter;
+        if (!filter || Object.keys(filter).length === 0) return query;
 
-        Object.keys(req.query.filter)
+        Object.keys(filter)
             .filter((key) => this.allowedFields.find(k => k === key))
             .map((key) => {
-                const filter = req.query.filter[key];
-                return { key, filter, options: filter.options ? JSON.parse(filter.options) : {} };
+                const f = filter[key];
+                return { key, f, options: f.options ? JSON.parse(f.options) : {} };
             })
-            .filter(({ filter, options }) =>  {
-                return options && options.allowEmpty ? true : filter.value;
+            .filter(({ f, options }) =>  {
+                return options && options.allowEmpty ? true : f.value;
             })
-            .forEach(({ key, filter }) => {
-                query = mapFilter[filter.op](query, key, filter.value);
+            .forEach(({ key, f }) => {
+                query = mapFilter[f.op](query, key, f.value);
             });
         return query;
     }
 
     applySorting(req, query) {
-        if (!req.query.sort || this.allowedSort.indexOf(req.query.sort.field) === -1) return query;
-        return query.sort({ [req.query.sort.field]: req.query.sort.order });
+        const sort = req.query.sort || this.defaultSort;
+        if (!sort || this.allowedSort.indexOf(sort.field) === -1) return query;
+        return query.sort({ [sort.field]: sort.order });
     }
 
     applyPagination(req, query) {

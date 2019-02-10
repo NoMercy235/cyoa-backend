@@ -22,12 +22,16 @@ const schema = new mongoose.Schema(
 
 schema.index({ name: 1, author: 1 }, { unique: true });
 
+schema.statics.getDefaultSort = () => {
+    return { field: 'created_at', order: 'desc' };
+};
+
 schema.statics.getAllowedFilters = function () {
     return ['name', 'tags', 'author', 'fromCollection'];
 };
 
 schema.statics.getAllowedSort = function () {
-    return ['name'];
+    return ['name', 'created_at'];
 };
 
 module.exports = {

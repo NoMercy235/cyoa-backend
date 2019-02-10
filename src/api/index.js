@@ -2,6 +2,9 @@ module.exports = {
     routes: {
         auth: { prefix: '/auth', routes: require('./auth/auth.routes') },
         tag: { prefix: '/tag', routes: require('./tags/tags.routes') },
+
+        pStory: { prefix: '/public/story', routes: require('./story/story.public.routes') },
+
         user: { prefix: '/api/user', routes: require('./user/user.routes') },
         collection: { prefix: '/api/collection', routes: require('./collection/collection.routes') },
         story: { prefix: '/api/story', routes: require('./story/story.routes') },

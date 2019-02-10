@@ -9,7 +9,9 @@ const findByCb = function (req) {
 const storyCtrl = new BaseController(Story, findByCb);
 
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push((req, item) => {
-    item.author = req.user._id;
+    const { user } = req;
+    item.author = user._id;
+    item.authorShort = `${user.firstName} ${user.lastName}`;
 });
 
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) => {

@@ -8,6 +8,7 @@ const schema = new mongoose.Schema(
     {
         name: { type: String, required: true },
         description: { type: String, required: true },
+        authorShort: { type: String },
         tags: { type: [String], required: true },
 
         author: { type: String, ref: USER, required: true },

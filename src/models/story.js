@@ -12,6 +12,7 @@ const schema = new mongoose.Schema(
         shortDescription: { type: String, required: true },
         longDescription: { type: String },
         authorShort: { type: String },
+        published: { type: Boolean },
 
         tags: [{ type: String, ref: TAG, required: true }],
         author: { type: String, ref: USER, required: true },
@@ -30,7 +31,7 @@ schema.statics.getDefaultSort = () => {
 };
 
 schema.statics.getAllowedFilters = function () {
-    return ['name', 'tags', 'author', 'fromCollection'];
+    return ['name', 'tags', 'author', 'fromCollection', 'published'];
 };
 
 schema.statics.getAllowedSort = function () {

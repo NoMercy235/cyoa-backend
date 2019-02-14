@@ -8,8 +8,13 @@ const findByCb = function (req) {
 
 const storyCtrl = new BaseController(Story, findByCb);
 
+storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) => {
+    query.find({ published: true });
+});
+
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query) => {
     query
+        .find({ published: true })
         .populate({
             path: 'startSeq',
             select: [ 'name', 'content', 'isEnding' ],

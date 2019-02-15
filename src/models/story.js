@@ -13,6 +13,7 @@ const schema = new mongoose.Schema(
         longDescription: { type: String },
         authorShort: { type: String },
         published: { type: Boolean },
+        coverPic: { type: String, default: null },
 
         tags: [{ type: String, ref: TAG, required: true }],
         author: { type: String, ref: USER, required: true },
@@ -37,6 +38,8 @@ schema.statics.getAllowedFilters = function () {
 schema.statics.getAllowedSort = function () {
     return ['name', 'created_at'];
 };
+
+schema.statics.ignoreFieldsInList = ['coverPic'];
 
 module.exports = {
     model: mongoose.model(MODEL, schema),

@@ -25,7 +25,8 @@ class BaseController {
 
     get () {
         return async (req, res) => {
-            let query = this.Resource.find({});
+            const ignoreFields = (this.Resource.ignoreFieldsInList || []).map(f => '-' + f).join(' ');
+            let query = this.Resource.find({}, ignoreFields);
             query = this.filter.applyFilters(req, query);
             query = this.filter.applySorting(req, query);
             query = this.filter.applyPagination(req, query);

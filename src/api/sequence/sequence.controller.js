@@ -10,7 +10,7 @@ const findByCb = function (req) {
 const sequenceCtrl = new BaseController(Sequence, findByCb);
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) => {
-    query = query.find({ story: req.params.story });
+    query = query.find({ story: req.params.story }).populate(['options']);
     return query;
 });
 

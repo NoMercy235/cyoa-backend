@@ -29,7 +29,12 @@ schema.statics.getAllowedSort = function () {
 };
 
 schema.statics.forPlayer = function (att) {
-    return { name: att.name, value: att.startValue, colorScheme: { background: 'white', text: 'black' } };
+    return {
+        name: att.name,
+        value: att.startValue,
+        isImportant: att.isImportant,
+        colorScheme: { background: 'white', text: 'black' },
+    };
 };
 
 module.exports = {

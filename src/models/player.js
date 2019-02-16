@@ -1,13 +1,15 @@
 const MODEL_NAMES = require('./model-names');
 const STORY = MODEL_NAMES.story;
-const USER = MODEL_NAMES.user;
+const SEQUENCE = MODEL_NAMES.sequence;
 const MODEL = MODEL_NAMES.player;
 
 const mongoose = require('mongoose');
 const schema = new mongoose.Schema(
     {
-        story: { type: String, ref: STORY },
-        user: { type: String, ref: USER },
+        player: { type: String, required: true },
+        lastStorySequence: { type: String, ref: SEQUENCE, required: true },
+
+        story: { type: String, ref: STORY, required: true },
         attributes: { type: Array },
     },
     {
@@ -15,7 +17,7 @@ const schema = new mongoose.Schema(
     }
 );
 
-schema.index({ story: 1, user: 1 }, { unique: true });
+schema.index({ story: 1, player: 1 }, { unique: true });
 
 
 module.exports = {

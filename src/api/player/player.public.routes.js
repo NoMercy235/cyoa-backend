@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const controller = require('./player.controller');
+const controller = require('./player.public.controller');
 
 router.get('/getOrCreate/:story', controller.getOrCreate);
 router.put('/updateAttributes/:id', controller.updateAttributes);

@@ -1,27 +1,37 @@
 const BaseController = require('../common/base.controller');
 const Attribute = require('../../models/attribute').model;
 const Player = require('../../models/player').model;
+const Story = require('../../models/story').model;
 
 const findByCb = function (req) {
     return { _id: req.params.id };
 };
 
+const makeRandomId = function () {
+    return Math.random().toString().substring(2);
+};
+
 const playerCtrl = new BaseController(Player, findByCb);
 
 async function getOrCreate (req) {
-    const query = { user: req.user._id, story: req.params.story };
-    let player = await Player.findOne(query).exec();
-    if (!player) {
+    const player = req.user ? req.user._id : (req.query.playerId || makeRandomId());
+    const query = { player, story: req.params.story };
+
+    let playerObj = await Player.findOne(query).exec();
+
+    if (!playerObj) {
+        const story = await Story.findOne({ _id: req.params.story });
         const attributes = await Attribute.find({ story: req.params.story });
 
-        player = new Player({
-            user: req.user._id,
-            story: req.params.story,
+        playerObj = new Player({
+            player,
+            story: story._id,
+            lastStorySequence: story.startSeq,
             attributes: attributes.map(Attribute.forPlayer),
         });
-        await player.save();
+        await playerObj.save();
     }
-    return player;
+    return playerObj;
 }
 
 async function updateAttributes (req) {

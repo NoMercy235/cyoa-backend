@@ -16,6 +16,7 @@ const schema = new mongoose.Schema(
         coverPic: { type: String, default: null },
 
         tags: [{ type: String, ref: TAG, required: true }],
+        tagsName: [{ type: String, required: true }],
         author: { type: String, ref: USER, required: true },
         fromCollection: { type: String, ref: COLLECTION, default: '' },
         startSeq: { type: String, ref: SEQUENCE },

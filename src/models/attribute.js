@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const schema = new mongoose.Schema(
     {
         name: { type: String, required: true },
+        isImportant: { type: Boolean, default: false },
         description: { type: String },
         startValue: { type: Number, default: 0 },
 

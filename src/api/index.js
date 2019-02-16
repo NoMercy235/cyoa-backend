@@ -4,6 +4,7 @@ module.exports = {
         tag: { prefix: '/tag', routes: require('./tags/tags.routes') },
 
         pStory: { prefix: '/public/story', routes: require('./story/story.public.routes') },
+        pSequence: { prefix: '/public/sequence', routes: require('./sequence/sequence.public.routes') },
 
         user: { prefix: '/api/user', routes: require('./user/user.routes') },
         collection: { prefix: '/api/collection', routes: require('./collection/collection.routes') },

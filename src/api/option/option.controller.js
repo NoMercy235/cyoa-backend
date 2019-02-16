@@ -21,7 +21,7 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req,
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE].push(async (res, item) => {
     const sequence = await Sequence.findOne({ _id: res.req.params.sequence }).exec();
-    sequence.options = item._id;
+    sequence.options.push(item._id);
     await sequence.save();
 });
 

@@ -14,7 +14,7 @@ const makeRandomId = function () {
 const playerCtrl = new BaseController(Player, findByCb);
 
 async function getOrCreate (req) {
-    const player = req.user ? req.user._id : (req.query.playerId || makeRandomId());
+    const player = req.query.playerId || makeRandomId();
     const query = { player, story: req.params.story };
 
     let playerObj = await Player.findOne(query).exec();
@@ -37,7 +37,9 @@ async function getOrCreate (req) {
 async function updateAttributes (req) {
     const query = { _id: req.params.id };
     const player = await Player.findOne(query).exec();
-    const newAttributes = req.body;
+
+    player.lastStorySequence = req.body.lastStorySequence;
+    const newAttributes = req.body.attributes || [];
 
     player.attributes.forEach((att, index) => {
         const newAtt = newAttributes.find(a => a.name === att.name);

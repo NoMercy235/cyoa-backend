@@ -15,7 +15,7 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push((req, item) 
 });
 
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) => {
-    query = query.find({ author: req.user._id });
+    query.find({ author: req.user._id });
     return query;
 });
 

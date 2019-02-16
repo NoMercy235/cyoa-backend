@@ -14,7 +14,7 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) =>
 
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query) => {
     query
-        .find({ published: true })
+        .findOne({ published: true })
         .populate({
             path: 'startSeq',
             select: [ 'name', 'content', 'isEnding' ],

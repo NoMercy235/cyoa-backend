@@ -52,7 +52,7 @@ class BaseController {
 
     getOne () {
         return async (req, res) => {
-            const ignoreFields = this.getIgnoreFields(req.query.ignoreFields.split(','));
+            const ignoreFields = this.getIgnoreFields(req.query.ignoreFields);
             let query = this.Resource.findOne(this.findByCb(req), ignoreFields);
             try {
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].map(cb => cb(req, query)));

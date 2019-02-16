@@ -23,9 +23,18 @@ class BaseController {
         this.callbacks = initCallbacks();
     }
 
+    getIgnoreFields (...arr) {
+        return arr
+            .map(a => {
+                if (typeof a === 'string') a = a.split(',');
+                return (a || []).map(f => '-' + f).join(' ')
+            })
+            .filter(val => val);
+    }
+
     get () {
         return async (req, res) => {
-            const ignoreFields = (this.Resource.ignoreFieldsInList || []).map(f => '-' + f).join(' ');
+            const ignoreFields = this.getIgnoreFields(this.Resource.ignoreFieldsInList, req.query.ignoreFields);
             let query = this.Resource.find({}, ignoreFields);
             query = this.filter.applyFilters(req, query);
             query = this.filter.applySorting(req, query);
@@ -43,7 +52,8 @@ class BaseController {
 
     getOne () {
         return async (req, res) => {
-            let query = this.Resource.findOne(this.findByCb(req));
+            const ignoreFields = this.getIgnoreFields(req.query.ignoreFields.split(','));
+            let query = this.Resource.findOne(this.findByCb(req), ignoreFields);
             try {
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].map(cb => cb(req, query)));
                 const item = await query.exec();

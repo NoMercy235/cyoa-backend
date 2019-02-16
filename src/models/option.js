@@ -17,7 +17,6 @@ const schema = new mongoose.Schema(
                 changeValue: Number,
                 _id: false,
             }],
-            required: true,
         },
     },
     {

@@ -8,7 +8,9 @@ const schema = new mongoose.Schema(
     {
         name: { type: String, required: true },
         content: { type: String, required: true },
+        authorNote: { type: String },
         isEnding: { type: Boolean, default: false },
+        scenePic: { type: String, default: null },
 
         story: { type: String, ref: STORY },
         options: [{ type: String, ref: OPTION }],

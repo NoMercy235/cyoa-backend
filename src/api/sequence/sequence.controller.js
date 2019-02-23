@@ -22,10 +22,16 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, qu
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req, item) => {
     await checkAuthor(req);
     item.story = req.params.story;
+    item.hasScenePic = !!item.scenePic;
 });
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {
     await checkAuthor(req);
+});
+
+sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].push(async (req, item) => {
+    item.hasScenePic = !!item.scenePic;
+    item.save();
 });
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req) => {

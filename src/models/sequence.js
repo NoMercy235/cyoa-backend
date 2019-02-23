@@ -11,6 +11,7 @@ const schema = new mongoose.Schema(
         authorNote: { type: String },
         isEnding: { type: Boolean, default: false },
         scenePic: { type: String, default: null },
+        hasScenePic: { type: Boolean },
 
         story: { type: String, ref: STORY },
         options: [{ type: String, ref: OPTION }],
@@ -31,6 +32,8 @@ schema.statics.getAllowedFilters = function () {
 schema.statics.getAllowedSort = function () {
     return ['name'];
 };
+
+schema.statics.ignoreFieldsInList = ['scenePic'];
 
 module.exports = {
     model: mongoose.model(MODEL, schema),

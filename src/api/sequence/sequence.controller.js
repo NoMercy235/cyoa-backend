@@ -25,13 +25,14 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (re
     item.hasScenePic = !!item.scenePic;
 });
 
-sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {
+sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, item, query) => {
     await checkAuthor(req);
+    query.select(['-scenePic'])
 });
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].push(async (req, item) => {
     item.hasScenePic = !!item.scenePic;
-    item.save();
+    await item.save();
 });
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req) => {

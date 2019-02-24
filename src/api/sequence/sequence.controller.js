@@ -48,10 +48,28 @@ async function checkAuthor(req) {
     }
 }
 
+const updateOrder = async (req, res) => {
+    const sequences = [];
+    try {
+        await checkAuthor(req);
+        await Promise.all(req.body.map(async seq => {
+            const dbSeq = await Sequence.findOne({ _id: seq._id });
+            dbSeq.order = seq.order;
+            sequences.push(dbSeq);
+            return dbSeq.save();
+        }));
+        res.json(sequences);
+    } catch (err) {
+        console.error(err);
+        res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
+    }
+};
+
 module.exports = {
     get: sequenceCtrl.get(),
     getOne: sequenceCtrl.getOne(),
     create: sequenceCtrl.create(),
     update: sequenceCtrl.update(),
     remove: sequenceCtrl.remove(),
+    updateOrder: updateOrder,
 };

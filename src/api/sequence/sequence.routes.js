@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const controller = require('./sequence.controller');
 
+router.put('/:story/updateOrder', controller.updateOrder);
 router.get('/:story', controller.get);
 router.post('/:story', controller.create);
 router.get('/:story/:id', controller.getOne);

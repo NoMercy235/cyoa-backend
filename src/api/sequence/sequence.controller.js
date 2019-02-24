@@ -35,6 +35,8 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (re
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].push(async (req, item) => {
     item.hasScenePic = !!item.scenePic;
     await item.save();
+    await item.populate(['options']).execPopulate();
+    console.log(item)
 });
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req) => {

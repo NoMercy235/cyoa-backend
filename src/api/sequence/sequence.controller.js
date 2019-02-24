@@ -23,6 +23,8 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (re
     await checkAuthor(req);
     item.story = req.params.story;
     item.hasScenePic = !!item.scenePic;
+    const lastSeqInOrder = await Sequence.findLastInOrder();
+    item.order = lastSeqInOrder.order + 1;
 });
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, item, query) => {

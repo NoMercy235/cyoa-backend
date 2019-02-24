@@ -12,6 +12,7 @@ const schema = new mongoose.Schema(
         isEnding: { type: Boolean, default: false },
         scenePic: { type: String, default: null },
         hasScenePic: { type: Boolean },
+        order: { type: Number, default: 0 },
 
         story: { type: String, ref: STORY },
         options: [{ type: String, ref: OPTION }],
@@ -30,10 +31,14 @@ schema.statics.getAllowedFilters = function () {
 };
 
 schema.statics.getAllowedSort = function () {
-    return ['name'];
+    return ['name', 'order'];
 };
 
 schema.statics.ignoreFieldsInList = ['scenePic'];
+
+schema.statics.findLastInOrder = function () {
+    return this.findOne({}).sort('-order');
+};
 
 module.exports = {
     model: mongoose.model(MODEL, schema),

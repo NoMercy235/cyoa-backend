@@ -27,16 +27,15 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (re
     item.order = lastSeqInOrder.order + 1;
 });
 
-sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, item, query) => {
+sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {
     await checkAuthor(req);
-    query.select(['-scenePic'])
 });
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].push(async (req, item) => {
     item.hasScenePic = !!item.scenePic;
     await item.save();
     await item.populate(['options']).execPopulate();
-    console.log(item)
+    delete item.scenePic;
 });
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req) => {

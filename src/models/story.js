@@ -33,7 +33,7 @@ schema.statics.getDefaultSort = () => {
 };
 
 schema.statics.getAllowedFilters = function () {
-    return ['name', 'tags', 'author', 'fromCollection', 'published'];
+    return ['name', 'description', 'tags', 'author', 'authorShort', 'fromCollection', 'published'];
 };
 
 schema.statics.getAllowedSort = function () {

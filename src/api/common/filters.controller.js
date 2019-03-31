@@ -1,12 +1,15 @@
 const mapFilter = {
-    'like': (query, field, val) => query.find({[field]: { $regex: '.*' + val + '.*' }}),
-    'equals': (query, field, val) => query.find({[field]: val }),
-    'lt': (query, field, val) => query.find({[field]: { $lt: val }}),
-    'lte': (query, field, val) => query.find({[field]: { $lte: val }}),
-    'gt': (query, field, val) => query.find({[field]: { $gt: val }}),
-    'gte': (query, field, val) => query.find({[field]: { $gte: val }}),
-    'in': (query, field, val) => query.find({[field]: { $in: val }}),
+    'like': (field, val) => { return {[field]: { $regex: '.*' + val + '.*' }} },
+    'ilike': (field, val) => { return { [field]: { $regex: new RegExp('.*' + val + '.*', "i") } } },
+    'equals': (field, val) => { return { [field]: val }; },
+    'lt': (field, val) => { return { [field]: { $lt: val } }; },
+    'lte': (field, val) => { return { [field]: { $lte: val } }; },
+    'gt': (field, val) => { return { [field]: { $gt: val } }; },
+    'gte': (field, val) => { return { [field]: { $gte: val } }; },
+    'in': (field, val, options = {}) => { return { [field]: { $in: val.split(options.splitter || ',') } }; },
 };
+
+const isOrFilter = filter => !!filter.$or;
 
 class Filter {
     constructor(resource) {
@@ -21,18 +24,31 @@ class Filter {
         const filter = req.query.filter || this.defaultFilter;
         if (!filter || Object.keys(filter).length === 0) return query;
 
-        Object.keys(filter)
+        const parsedFilters = Object.keys(filter)
             .filter((key) => this.allowedFields.find(k => k === key))
             .map((key) => {
                 const f = filter[key];
                 return { key, f, options: f.options ? JSON.parse(f.options) : {} };
             })
             .filter(({ f, options }) =>  {
-                return options && options.allowEmpty ? true : f.value;
-            })
-            .forEach(({ key, f }) => {
-                query = mapFilter[f.op](query, key, f.value);
+                return options
+                    ? (options.allowEmpty ? true : f.value)
+                    : true;
             });
+
+        if (!parsedFilters.length) return query;
+
+        if (isOrFilter(filter)) {
+            query = query.find({
+                $or: parsedFilters.map(({ key, f }) => {
+                    return mapFilter[f.op](key, f.value, f.options);
+                }),
+            });
+        } else {
+            parsedFilters.forEach(({ key, f }) => {
+                query = query.find(mapFilter[f.op](key, f.value, f.options));
+            });
+        }
         return query;
     }
 

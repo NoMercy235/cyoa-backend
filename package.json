@@ -6,7 +6,9 @@
   "scripts": {
     "start": "nodemon src/index.js",
     "prep-database": "node scripts/seed-db.js && node scripts/create-tags.js",
-    "serve": "docker-compose down && docker-compose build --no-cache && docker-compose up -d"
+    "serve": "npm run docker-setup && npm run clean-node-modules",
+    "docker-setup": "docker-compose down && docker-compose build --no-cache && docker-compose up -d",
+    "clean-node-modules": "rm -rf node_modules/"
   },
   "repository": {
     "type": "git",

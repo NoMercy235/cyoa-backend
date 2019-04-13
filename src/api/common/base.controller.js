@@ -3,7 +3,7 @@ const Filter = require('./filters.controller');
 
 function exists (res, item) {
     if (!item) {
-        res.status(constants.HTTP_CODES.NOT_FOUND).send();
+        res.sendStatus(constants.HTTP_CODES.NOT_FOUND);
         return false;
     }
     return true;

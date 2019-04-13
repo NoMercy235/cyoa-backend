@@ -1,5 +1,5 @@
-let BaseController = require('../common/base.controller');
-let User = require('../../models/user').model;
+const BaseController = require('../common/base.controller');
+const User = require('../../models/user').model;
 
 const findByCb = function (req) {
     return { email: req.params.email }

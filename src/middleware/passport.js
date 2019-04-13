@@ -9,10 +9,10 @@ let JwtStrategy = passportJWT.Strategy;
 
 let strategy = new JwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: config.secret
+    secretOrKey: config.secret,
 }, function(jwt, next) {
     User.findOne({
-        email: jwt.email
+        email: jwt.email,
     }, (err, user) => {
         if (user) {
             next(null, user.safeToSend(true));
@@ -26,5 +26,5 @@ passport.use(strategy);
 
 module.exports = {
     passport: passport,
-    prefix: '/api'
+    prefix: '/api',
 };

@@ -7,4 +7,5 @@ module.exports = {
     attribute: 'Attribute',
     player: 'Player',
     tag: 'Tag',
+    chapter: 'Chapter',
 };

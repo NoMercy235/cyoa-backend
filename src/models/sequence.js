@@ -1,6 +1,7 @@
 const MODEL_NAMES = require('./model-names');
 const STORY = MODEL_NAMES.story;
 const OPTION = MODEL_NAMES.option;
+const CHAPTER = MODEL_NAMES.chapter;
 const MODEL = MODEL_NAMES.sequence;
 
 const mongoose = require('mongoose');
@@ -15,6 +16,7 @@ const schema = new mongoose.Schema(
         order: { type: Number, default: 0 },
 
         story: { type: String, ref: STORY },
+        chapter: { type: String, ref: CHAPTER },
         options: [{ type: String, ref: OPTION }],
     },
     {

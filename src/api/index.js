@@ -13,5 +13,6 @@ module.exports = {
         sequence: { prefix: '/api/sequence', routes: require('./sequence/sequence.routes') },
         option: { prefix: '/api/option', routes: require('./option/option.routes') },
         attribute: { prefix: '/api/attribute', routes: require('./attribute/attribute.routes') },
+        chapter: { prefix: '/api/chapter', routes: require('./chapter/chapter.routes') },
     },
 };

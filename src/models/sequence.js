@@ -7,8 +7,8 @@ const MODEL = MODEL_NAMES.sequence;
 const mongoose = require('mongoose');
 const schema = new mongoose.Schema(
     {
+        name: { type: String, required: true },
         content: { type: String, required: true },
-        authorNote: { type: String, required: true },
         isEnding: { type: Boolean, default: false },
         scenePic: { type: String, default: null },
         hasScenePic: { type: Boolean },
@@ -24,7 +24,7 @@ const schema = new mongoose.Schema(
     }
 );
 
-schema.index({ authorNote: 1, story: 1 }, { unique: true });
+schema.index({ name: 1, story: 1 }, { unique: true });
 
 
 schema.statics.getAllowedFilters = function () {

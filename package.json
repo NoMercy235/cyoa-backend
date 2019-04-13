@@ -9,7 +9,8 @@
     "serve": "npm run docker-setup && npm run clean-node-modules",
     "docker-setup": "docker-compose down && docker-compose build --no-cache && docker-compose up -d",
     "clean-node-modules": "rm -rf node_modules/",
-    "generate-test-story": "node scripts/test-story.js"
+    "generate-test-story": "node scripts/test-story.js",
+    "generate-stanley": "node scripts/stanley/_clear-stanley.js && node scripts/stanley/_generate-stanley.js"
   },
   "repository": {
     "type": "git",

@@ -13,7 +13,7 @@ const schema = new mongoose.Schema(
 
         author: { type: String, ref: USER, required: true },
         story: { type: String, ref: STORY, required: true },
-        parentChapter: { type: String, ref: CHAPTER },
+        parentChapter: { type: String, ref: CHAPTER, default: '' },
         sequences: [{ type: mongoose.Schema.Types.ObjectId, ref: SEQUENCE }],
         subChapters: [{ type: mongoose.Schema.Types.ObjectId, ref: CHAPTER, default: [] }],
     },

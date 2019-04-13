@@ -43,4 +43,20 @@ controller.register = (req, res) => {
     });
 };
 
+controller.checkToken = (req, res) => {
+    const token = req.headers.authorization;
+    if (!token) {
+        res.sendStatus(constants.HTTP_CODES.UNAUTHORIZED);
+        return;
+    }
+    const prefix = 'Bearer ';
+    jwt.verify(token.replace(prefix, ''), config.secret, (err) => {
+        if (err) {
+            res.sendStatus(constants.HTTP_CODES.UNAUTHORIZED);
+            return;
+        }
+        res.sendStatus(constants.HTTP_CODES.OK);
+    });
+};
+
 module.exports = controller;

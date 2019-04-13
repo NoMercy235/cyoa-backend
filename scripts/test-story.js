@@ -44,6 +44,9 @@ async function createStory (currentUser, collection) {
         tags: tags.map(t => t._id),
         tagsName: tags.map(t => t.name),
     });
+
+    collection.stories.push(story._id);
+    await collection.save();
     await story.save();
     return story;
 }
@@ -74,6 +77,8 @@ async function createChapters (currentUser, story) {
                     author: currentUser._id,
                     story: story._id,
                 });
+                story.chapters.push(chapter._id);
+                await story.save();
                 return chapter.save();
             })
     );
@@ -93,6 +98,8 @@ async function createSequences (currentUser, story, chapter) {
                     story: story._id,
                     chapter: chapter._id,
                 });
+                chapter.sequences.push(sequence._id);
+                await chapter.save();
                 return sequence.save();
             })
     );
@@ -164,6 +171,18 @@ function createConsequences (attributes, nr) {
     await createEndingSeq(sequences[sequences.length - 1]);
 
     const options = await createOptions(story, sequences, attributes);
+
+    const dbOptions = await Option.find({}).exec();
+
+    // These have to be updated like this because of an issue in the createOptions method.
+    // It looks like async await does not wait for all the promises there, and there are too many
+    // save operations fired at once. This leads to mongo creating the same id for two different
+    // resources, and this messes up the app.
+    await Promise.all(dbOptions.map(async o => {
+        const seq = await Sequence.findOne({ _id: o.sequence }).exec();
+        seq.options.push(o._id);
+        return seq.save();
+    }));
 
     seedComplete({
         collection,

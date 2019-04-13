@@ -1,14 +1,14 @@
 console.warn('Do not use this for production database!');
 
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-let Collection = require('../src/models/collection').model;
-let Story = require('../src/models/story').model;
-let Attribute = require('../src/models/attribute').model;
-let Chapter = require('../src/models/chapter').model;
-let Sequence = require('../src/models/sequence').model;
-let Option = require('../src/models/option').model;
-let config = require('../src/config');
+const Collection = require('../src/models/collection').model;
+const Story = require('../src/models/story').model;
+const Attribute = require('../src/models/attribute').model;
+const Chapter = require('../src/models/chapter').model;
+const Sequence = require('../src/models/sequence').model;
+const Option = require('../src/models/option').model;
+const config = require('../src/config');
 
 // Overriding the deprecated "Promise" module of mongoose.
 // For more information see: https://github.com/Automattic/mongoose/issues/4291

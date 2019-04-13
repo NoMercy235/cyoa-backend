@@ -40,9 +40,7 @@ chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (re
 
     // If it did, remove it from the subChapters list of parentChapter.
     const oldParentChapter = await getChapter(dbChapter.parentChapter);
-    oldParentChapter.subChapters = oldParentChapter.subChapters.filter(chapterId => {
-        return chapterId.toString() !== item._id;
-    });
+    deleteChapterFromSubchapters(oldParentChapter, item._id);
     await oldParentChapter.save();
 
     // And add it to the new parentChapter's list
@@ -55,6 +53,14 @@ chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (re
     await checkAuthor(req, item);
 });
 
+chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_REMOVE].push(async (req, item) => {
+    if (item.parentChapter) {
+        const parentChapter = await getChapter(item.parentChapter);
+        deleteChapterFromSubchapters(parentChapter, item._id);
+        await parentChapter.save();
+    }
+});
+
 async function checkAuthor(req, item) {
     if (item.author === req.user._id) {
         throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
@@ -63,6 +69,12 @@ async function checkAuthor(req, item) {
 
 async function getChapter(id) {
     return await Chapter.findOne({ _id: id }).exec();
+}
+
+function deleteChapterFromSubchapters(chapter, deletedChapterId) {
+    chapter.subChapters = chapter.subChapters.filter(chapterId => {
+        return chapterId.toString() !== deletedChapterId.toString();
+    });
 }
 
 module.exports = {

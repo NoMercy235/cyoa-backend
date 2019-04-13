@@ -1,5 +1,6 @@
 const MODEL_NAMES = require('./model-names');
 const CHAPTER = MODEL_NAMES.chapter;
+const STORY = MODEL_NAMES.chapter;
 const SEQUENCE = MODEL_NAMES.sequence;
 const USER = MODEL_NAMES.user;
 const MODEL = MODEL_NAMES.chapter;
@@ -11,6 +12,7 @@ const schema = new mongoose.Schema(
         description: { type: String },
 
         author: { type: String, ref: USER, required: true },
+        story: { type: String, ref: STORY, required: true },
         parentChapter: { type: String, ref: CHAPTER },
         sequences: [{ type: mongoose.Schema.Types.ObjectId, ref: SEQUENCE }],
         subChapters: [{ type: mongoose.Schema.Types.ObjectId, ref: CHAPTER, default: [] }],

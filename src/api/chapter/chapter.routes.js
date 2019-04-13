@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const controller = require('./chapter.controller');
 
-router.get('/', controller.get);
-router.post('/', controller.create);
-router.get('/:id', controller.getOne);
-router.put('/:id', controller.update);
-router.delete('/:id', controller.remove);
+router.get('/:story', controller.get);
+router.post('/:story', controller.create);
+router.get('/:story/:id', controller.getOne);
+router.put('/:story/:id', controller.update);
+router.delete('/:story/:id', controller.remove);
 
 module.exports = router;

@@ -24,7 +24,7 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (re
     item.story = req.params.story;
     item.hasScenePic = !!item.scenePic;
     const lastSeqInOrder = await Sequence.findLastInOrder();
-    item.order = lastSeqInOrder.order + 1;
+    item.order = lastSeqInOrder ? lastSeqInOrder.order + 1 : 0;
 });
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {

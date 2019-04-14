@@ -11,12 +11,15 @@ mongoose.connect(config.database, { useMongoClient: true, keepAlive: false });
 (async function (){
     try {
         const sequences = await Sequence.find({}).exec();
+
         await Promise.all(
             sequences.map(async seq => {
-                if (seq.chapter === null || seq.chapter === undefined) {
-                    seq.chapter = '';
-                    return seq.save();
+		console.log(seq);
+                if (seq.chapter && seq.chapter.length) {
+                    return;
                 }
+                seq.chapter = '';
+                return seq.save();
             })
         );
         seedComplete();

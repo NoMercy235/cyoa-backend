@@ -20,6 +20,21 @@ const notToday = {
     sequences:  require('./sequences/not-today'),
 };
 
+const aNewChoice = {
+    sequences: require ('./sequences/a-new-choice'),
+    options: require ('./options/a-new-choice'),
+};
+
+const followingOrders = {
+    sequences: require ('./sequences/following-orders'),
+    options: require ('./options/following-orders'),
+};
+
+const inControl = {
+    sequences: require ('./sequences/in-control'),
+    options: require ('./options/in-control'),
+};
+
 // Overriding the deprecated "Promise" module of mongoose.
 // For more information see: https://github.com/Automattic/mongoose/issues/4291
 mongoose.Promise = global.Promise;
@@ -68,23 +83,32 @@ That's for you to decide. Take Stanley's fate into your own hands as you guide h
 }
 
 async function createAttributes (story) {
+    let result = [];
     const attribute = new Attribute({
         name: 'Health',
         isImportant: true,
         startValue: 100,
         story: story._id,
     });
-    return attribute.save();
+    await attribute.save();
+    result.push(attribute);
+    return result;
 }
 
 const sequences = [
     ...aManNamedStanley.sequences,
     ...notToday.sequences,
+    ...aNewChoice.sequences,
+    ...followingOrders.sequences,
+    ...inControl.sequences,
 ];
 
-const options = {
-    aManNamedStanley: aManNamedStanley.options,
-};
+const options = [
+    ...aManNamedStanley.options,
+    ...aNewChoice.options,
+    ...followingOrders.options,
+    ...inControl.options,
+];
 
 async function createSequences (currentUser, story) {
     return await Promise.all(
@@ -104,31 +128,40 @@ async function createSequences (currentUser, story) {
 }
 
 async function createOptions (story, dbSequences) {
-    return Promise.all(
-        dbSequences.map(dbSeq => {
-            const mySeq = sequences.find(s => s.name === dbSeq.name);
-            const myOpts = options[mySeq.id];
+    // For each sequence in the database
+    let result = [];
+    let i = 0;
+    for (let dbSeq of dbSequences) {
+    // Find the sequence in my defined array
+        const mySeq = sequences.find(s => s.name === dbSeq.name);
+        // Find all the options available for that sequence
+        const myOpts = options.filter(o => o.sequence === mySeq.id);
 
-            return Promise.all((myOpts || []).map(async (o) => {
-                const nextSeq = dbSequences.find(dbS => dbS.name === (
-                    sequences.find(s => s.id === o.nextSeq).name
-                ));
+        // For all options...
+        result.push([]);
+        for (let o of (myOpts || [])) {
+            // Find the nextSeq for that option (we need the _id property)
+            const nextSeq = dbSequences.find(dbS => dbS.name === (
+                sequences.find(s => s.id === o.nextSeq).name
+            ));
 
-                const option = new Option({
-                    action: o.action,
-                    story: story._id,
-                    sequence: dbSeq._id,
-                    nextSeq: nextSeq._id,
-                    consequences: o.consequences,
-                });
+            const option = new Option({
+                action: o.action,
+                story: story._id,
+                sequence: dbSeq._id,
+                nextSeq: nextSeq._id,
+                consequences: o.consequences,
+            });
+            await option.save();
 
-                dbSeq.options.push(option._id);
-                await dbSeq.save();
+            dbSeq.options.push(option._id);
+            await dbSeq.save();
+            result[i].push(option);
+        }
+        i++;
+    }
 
-                return option.save();
-            }))
-        })
-    )
+    return result;
 }
 
 (async function generateStory(){
@@ -147,10 +180,11 @@ async function createOptions (story, dbSequences) {
     story.startSeq = sequences[0].id;
     await story.save();
 
-    // await createStartSeq(story, sequences[0]);
-    // await createEndingSeq(sequences[sequences.length - 1]);
-    //
-    const options = await createOptions(story, sequences);
+    const optionsArr = await createOptions(story, sequences);
+
+    checkOptions(optionsArr);
+    checkSequencesOptions(sequences);
+
 
     seedComplete({
         collection,
@@ -170,14 +204,14 @@ function seedComplete ({
     sequences,
     // options,
 }) {
-    const seqDisplay = sequences.map(s => s.length).join(', ');
+    const attrDisplay = attributes.map(a => a.name).join(', ');
 
     console.log('Seed complete');
     console.log(`Collection: ${collection.name} | ${collection._id}`);
     console.log(`Story: ${story.name} | ${story._id}`);
-    console.log(`Attributes: ${attributes.length}`);
+    console.log(`Attributes: ${attrDisplay}`);
     // console.log(`Chapters: ${chapters.length}`);
-    console.log(`Sequences: ${seqDisplay}`);
+    console.log(`Sequences: ${sequences.length}`);
     console.log(`Options: they are there`);
     process.exit(0);
 }
@@ -187,52 +221,26 @@ function seedFailed (reason) {
     process.exit(1);
 }
 
-function randomString(length = 5) {
-    let text = "";
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (let i = 0; i < length; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
+function checkSequencesOptions (sequences) {
+    sequences.forEach(seq => {
+        let ids = {};
+        seq.options.forEach(option => {
+            if (ids[option]) {
+                console.log('DUPLICATE options in sequences: ', seq, option)
+            }
+            ids[option] = true;
+        });
+    })
 }
 
-function randomDigit() {
-    return Math.floor(Math.random() * 10);
-}
-
-function randomNumber(max = 100, min = 0) {
-    return Math.floor(Math.random() * max) + min;
-}
-
-function randomWord(max = 10, min = 0) {
-    return randomString(randomNumber(max, min) + 1);
-}
-
-function randomBoolean() {
-    return randomDigit() % 2 === 0;
-}
-
-function lowerRandomBoolean(chance) {
-    return randomNumber(chance) === 0;
-}
-
-function randomText (length) {
-    if (!length) length = randomNumber() + 1;
-    return new Array(length)
-        .fill(0)
-        .map(() => randomWord())
-        .join(' ');
-}
-
-function randomElFromArr (arr) {
-    let pos = randomNumber(arr.length - 1);
-    pos = pos < 0
-        ? 0
-        : (
-            pos >= arr.length
-                ? arr.length - 1
-                : pos
-        );
-    return arr[pos];
+function checkOptions (optionsArr) {
+    let ids = {};
+    optionsArr.forEach(row => {
+        row.forEach(option => {
+            if (ids[option._id]) {
+                console.log('DUPLICATE options: ', option._id)
+            }
+            ids[option._id] = true;
+        });
+    });
 }

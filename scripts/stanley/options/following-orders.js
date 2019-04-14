@@ -28,6 +28,12 @@ module.exports = [
         consequences: [],
     },
     {
+        action: 'Walk downstairs',
+        sequence: generateId(3),
+        nextSeq: 'downstairsDeath1',
+        consequences: [],
+    },
+    {
         action: 'Enter 2-8-4-5 into the keypad',
         sequence: generateId(4),
         nextSeq: generateId(5),

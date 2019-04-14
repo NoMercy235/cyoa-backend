@@ -58,6 +58,12 @@ module.exports = [
         consequences: [],
     },
     {
+        action: 'Walk into the long hallway',
+        sequence: generateId(7),
+        nextSeq: 'hallwayEscape1',
+        consequences: [],
+    },
+    {
         action: 'Walk to the next platform',
         sequence: generateId(8),
         nextSeq: generateId(9),

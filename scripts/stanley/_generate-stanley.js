@@ -46,6 +46,11 @@ const broomCloset = {
     options: require ('./options/broom-closet'),
 };
 
+const escapeThroughTheHallway = {
+    sequences: require ('./sequences/escape-through-the-hallway'),
+    options: require ('./options/escape-through-the-hallway'),
+};
+
 // Overriding the deprecated "Promise" module of mongoose.
 // For more information see: https://github.com/Automattic/mongoose/issues/4291
 mongoose.Promise = global.Promise;
@@ -114,6 +119,7 @@ const sequences = [
     ...inControl.sequences,
     ...notPressingTheElevatorButton.sequences,
     ...broomCloset.sequences,
+    ...escapeThroughTheHallway.sequences,
 ];
 
 const options = [
@@ -123,6 +129,7 @@ const options = [
     ...inControl.options,
     ...notPressingTheElevatorButton.options,
     ...broomCloset.options,
+    ...escapeThroughTheHallway.options,
 ];
 
 async function createSequences (currentUser, story) {

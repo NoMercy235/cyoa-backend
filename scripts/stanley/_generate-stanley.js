@@ -35,6 +35,11 @@ const inControl = {
     options: require ('./options/in-control'),
 };
 
+const notPressingTheElevatorButton = {
+    sequences: require ('./sequences/not-pressing-the-elevator-button'),
+    options: require ('./options/not-pressing-the-elevator-button'),
+};
+
 // Overriding the deprecated "Promise" module of mongoose.
 // For more information see: https://github.com/Automattic/mongoose/issues/4291
 mongoose.Promise = global.Promise;
@@ -101,6 +106,7 @@ const sequences = [
     ...aNewChoice.sequences,
     ...followingOrders.sequences,
     ...inControl.sequences,
+    ...notPressingTheElevatorButton.sequences,
 ];
 
 const options = [
@@ -108,6 +114,7 @@ const options = [
     ...aNewChoice.options,
     ...followingOrders.options,
     ...inControl.options,
+    ...notPressingTheElevatorButton.options,
 ];
 
 async function createSequences (currentUser, story) {

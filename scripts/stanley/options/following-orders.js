@@ -40,6 +40,12 @@ module.exports = [
         consequences: [],
     },
     {
+        action: 'Don\'t press the button',
+        sequence: generateId(6),
+        nextSeq: 'notGonnaPressIt1',
+        consequences: [],
+    },
+    {
         action: 'Walk into the large door',
         sequence: generateId(7),
         nextSeq: generateId(8),

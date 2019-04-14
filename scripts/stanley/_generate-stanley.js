@@ -11,6 +11,7 @@ const Chapter = require('../../src/models/chapter').model;
 const Sequence = require('../../src/models/sequence').model;
 const Option = require('../../src/models/option').model;
 const config = require('../../src/config');
+const coverPic = require('./cover-pic');
 
 const aManNamedStanley = {
     sequences: require ('./sequences/a-man-named-stanley'),
@@ -82,7 +83,7 @@ That's for you to decide. Take Stanley's fate into your own hands as you guide h
         longDescription: longDescription,
         authorShort: `${currentUser.firstName} ${currentUser.lastName}`,
         published: true,
-        // coverPic: '',
+        coverPic,
         author: currentUser._id,
         fromCollection: collection._id,
         tags: tags.map(t => t._id),

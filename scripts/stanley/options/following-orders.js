@@ -10,6 +10,12 @@ module.exports = [
         consequences: [],
     },
     {
+        action: 'Enter the right door',
+        sequence: generateId(1),
+        nextSeq: 'rightDoor1',
+        consequences: [],
+    },
+    {
         action: 'Go to the staircase',
         sequence: generateId(2),
         nextSeq: generateId(3),

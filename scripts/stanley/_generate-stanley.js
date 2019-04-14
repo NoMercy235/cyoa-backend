@@ -56,6 +56,25 @@ const downstairsDeath = {
     options: require ('./options/downstairs-death'),
 };
 
+const rightDoor = {
+    sequences: require ('./sequences/right-door'),
+    options: require ('./options/right-door'),
+};
+
+const employeeLoungeAndBack = {
+    sequences: require ('./sequences/employee-lounge-and-back'),
+    options: require ('./options/employee-lounge-and-back'),
+};
+
+const fallDownThePit = {
+    sequences: require ('./sequences/fall-down-the-pit'),
+};
+
+const jumpOnElevatorPlatform = {
+    sequences: require ('./sequences/jump-on-elevator-platform'),
+    options: require ('./options/jump-on-elevator-platform'),
+};
+
 // Overriding the deprecated "Promise" module of mongoose.
 // For more information see: https://github.com/Automattic/mongoose/issues/4291
 mongoose.Promise = global.Promise;
@@ -126,6 +145,10 @@ const sequences = [
     ...broomCloset.sequences,
     ...escapeThroughTheHallway.sequences,
     ...downstairsDeath.sequences,
+    ...rightDoor.sequences,
+    ...employeeLoungeAndBack.sequences,
+    ...fallDownThePit.sequences,
+    ...jumpOnElevatorPlatform.sequences,
 ];
 
 const options = [
@@ -137,6 +160,9 @@ const options = [
     ...broomCloset.options,
     ...escapeThroughTheHallway.options,
     ...downstairsDeath.options,
+    ...rightDoor.options,
+    ...employeeLoungeAndBack.options,
+    ...jumpOnElevatorPlatform.options,
 ];
 
 async function createSequences (currentUser, story) {
@@ -170,9 +196,11 @@ async function createOptions (story, dbSequences) {
         result.push([]);
         for (let o of (myOpts || [])) {
             // Find the nextSeq for that option (we need the _id property)
-            const nextSeq = dbSequences.find(dbS => dbS.name === (
-                sequences.find(s => s.id === o.nextSeq).name
-            ));
+            const seq = sequences.find(s => s.id === o.nextSeq);
+            if (!seq) {
+                seedFailed('Not found: ', o);
+            }
+            const nextSeq = dbSequences.find(dbS => dbS.name === seq.name);
 
             const option = new Option({
                 action: o.action,
@@ -245,7 +273,7 @@ function seedComplete ({
     process.exit(0);
 }
 
-function seedFailed (reason) {
+function seedFailed (...reason) {
     console.error(reason);
     process.exit(1);
 }

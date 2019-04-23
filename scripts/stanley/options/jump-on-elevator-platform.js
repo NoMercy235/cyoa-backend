@@ -125,6 +125,14 @@ module.exports = [
         nextSeq: generateId(19),
         consequences: [],
     },
+    ...[17, 18].map(el => {
+        return {
+            action: 'Enter the red door',
+            sequence: generateId(el),
+            nextSeq: generateId(4),
+            consequences: [],
+        }
+    }),
     {
         action: 'Take a stab in the dark',
         sequence: generateId(19),

@@ -6,7 +6,7 @@ module.exports = [
     {
         id: generateId(1),
         name: 'Elevator platform - just jumped',
-        content: `he elevator platform whirred into motion as it gradually moved to the other room.
+        content: `The elevator platform whirred into motion as it gradually moved to the other room.
 
 Look, Stanley, I think perhaps we've gotten off on the wrong foot here. I'm not your enemy, really I'm not! I understand that investing your trust in someone else can be difficult, but the fact is the Story has been about nothing but you, all this time!
 

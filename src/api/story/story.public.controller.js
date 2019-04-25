@@ -25,7 +25,28 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query
         });
 });
 
+
+async function onQuickSearch (req) {
+    const {
+        quickSearch,
+        sort = Story.getDefaultSort(),
+    } = req.query;
+    const searchQuery = { $regex: new RegExp(`.*${quickSearch}.*`, 'i') };
+    return await Story
+        .find({
+            $or: [
+                { name: searchQuery },
+                { shortDescription: searchQuery },
+                { longDescription: searchQuery },
+                { authorShort: searchQuery },
+            ],
+        })
+        .sort({ [sort.field]: sort.order })
+        .exec();
+}
+
 module.exports = {
+    getQuick: storyCtrl.createCustomHandler(onQuickSearch),
     get: storyCtrl.get(),
     getOne: storyCtrl.getOne(),
 };

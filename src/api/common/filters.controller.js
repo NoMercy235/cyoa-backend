@@ -1,6 +1,6 @@
 const mapFilter = {
     'like': (field, val) => { return {[field]: { $regex: '.*' + val + '.*' }} },
-    'ilike': (field, val) => { return { [field]: { $regex: new RegExp('.*' + val + '.*', "i") } } },
+    'ilike': (field, val) => { return { [field]: { $regex: new RegExp('.*' + val + '.*', 'i') } } },
     'equals': (field, val) => { return { [field]: val }; },
     'lt': (field, val) => { return { [field]: { $lt: val } }; },
     'lte': (field, val) => { return { [field]: { $lte: val } }; },

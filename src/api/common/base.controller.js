@@ -38,10 +38,11 @@ class BaseController {
             let query = this.Resource.find({}, ignoreFields);
             query = this.filter.applyFilters(req, query);
             query = this.filter.applySorting(req, query);
-            query = this.filter.applyPagination(req, query);
             try {
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].map(cb => cb(req, query)));
-                const items = await query.exec();
+                const items = req.query.pagination
+                    ? await this.filter.applyPagination(req.query.pagination, query)
+                    : await query.exec();
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_GET].map(cb => cb(req, items)));
                 res.json(items);
             } catch (err) {

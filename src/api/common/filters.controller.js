@@ -58,12 +58,20 @@ class Filter {
         return query.sort({ [sort.field]: sort.order });
     }
 
-    applyPagination(req, query) {
-        if (!req.query.pagination) return query;
-        const page = +req.query.pagination.page;
-        const limit = +req.query.pagination.limit;
+    // We already assume that they have pagination here
+    async applyPagination(pagination, query) {
+        const countQuery = query.model.find().merge(query).skip(0).limit(0).count();
+        const page = +pagination.page;
+        const limit = +pagination.limit;
+        const items = query.skip(page * limit).limit(limit).exec();
 
-        return query.skip(page * limit).limit(limit);
+        const [data, total] = await Promise.all([items, countQuery]);
+
+        return {
+            data,
+            page,
+            total,
+        };
     }
 }
 

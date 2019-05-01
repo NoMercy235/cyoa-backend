@@ -11,7 +11,9 @@ const findByCb = function (req) {
 const optionCtrl = new BaseController(Option, findByCb);
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push(async (req, query) => {
-    query.find({ sequence: req.params.sequence });
+    query
+        .find({ sequence: req.params.sequence })
+        .populate(['nextSeq']);
 });
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req, item) => {
@@ -20,13 +22,23 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req,
 });
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE].push(async (res, item) => {
-    const sequence = await Sequence.findOne({ _id: res.req.params.sequence }).exec();
+    const [sequence, nextSeq ] = await Promise.all([
+        Sequence.findOne({ _id: res.req.params.sequence }).exec(),
+        getNextSeq(item),
+    ]);
+    // const sequence = await Sequence.findOne({ _id: res.req.params.sequence }).exec();
     sequence.options.push(item._id);
     await sequence.save();
+    console.log(nextSeq);
+    item.nextSeq = nextSeq;
 });
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {
     await checkStory(req);
+});
+
+optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].push(async (req, item) => {
+    item.nextSeq = await getNextSeq(item);
 });
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req) => {
@@ -52,6 +64,10 @@ async function checkStory(req) {
     if (story.author !== req.user._id.toString()) {
         throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
     }
+}
+
+function getNextSeq (item) {
+    return Sequence.findOne({ _id: item.nextSeq }).exec();
 }
 
 module.exports = {

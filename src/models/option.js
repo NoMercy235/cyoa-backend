@@ -8,9 +8,9 @@ const schema = new mongoose.Schema(
     {
         action: { type: String, required: true },
 
-        story: { type: String, ref: STORY },
-        sequence: { type: String, ref: SEQUENCE },
-        nextSeq: { type: String, ref: SEQUENCE },
+        story: { type: String, ref: STORY, required: true },
+        sequence: { type: String, ref: SEQUENCE, required: true },
+        nextSeq: { type: String, ref: SEQUENCE, required: true },
         consequences: {
             type: [{
                 attribute: String,

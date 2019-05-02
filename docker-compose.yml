@@ -8,6 +8,7 @@ services:
             dockerfile: Dockerfile
         ports:
             - "4208:8080"
+            - "4209:443"
         networks:
             - cyoa-network
     mongo-db:

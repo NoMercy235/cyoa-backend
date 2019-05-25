@@ -15,6 +15,7 @@ const schema = new mongoose.Schema(
         authorShort: { type: String },
         published: { type: Boolean },
         coverPic: { type: String, default: null },
+        isAvailableOffline: { type: Boolean, default: false },
 
         chapters: [{ type: String, ref: CHAPTER }],
         tags: [{ type: String, ref: TAG, required: true }],

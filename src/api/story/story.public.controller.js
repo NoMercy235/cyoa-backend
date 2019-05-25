@@ -1,5 +1,7 @@
 const BaseController = require('../common/base.controller');
 const Story = require('../../models/story').model;
+const Sequence = require('../../models/sequence').model;
+const Option = require('../../models/option').model;
 const constants = require('../common/constants');
 
 const findByCb = function (req) {
@@ -25,7 +27,6 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query
         });
 });
 
-
 async function onQuickSearch (req) {
     const {
         quickSearch,
@@ -45,8 +46,34 @@ async function onQuickSearch (req) {
         .exec();
 }
 
+async function offlineStory (req) {
+    const { id: storyId } = req.params;
+    let result = {};
+    result.story = await Story.findOne({ _id: storyId }).exec();
+
+    if (!result.story) {
+        throw {
+            status: constants.HTTP_CODES.NOT_FOUND,
+            message: 'Resource not found',
+        };
+    }
+
+    if (!result.story.isAvailableOffline) {
+        throw {
+            status: constants.HTTP_CODES.BAD_REQUEST,
+            message: 'Story not available offline',
+        };
+    }
+
+    result.sequences = await Sequence.find({ story: storyId }).exec();
+    result.options = await Option.find({ story: storyId }).exec();
+
+    return result;
+}
+
 module.exports = {
     getQuick: storyCtrl.createCustomHandler(onQuickSearch),
     get: storyCtrl.get(),
     getOne: storyCtrl.getOne(),
+    offlineStory: storyCtrl.createCustomHandler(offlineStory),
 };

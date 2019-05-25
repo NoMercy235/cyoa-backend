@@ -146,7 +146,11 @@ class BaseController {
                 res.status(constants.HTTP_CODES.OK).json(result);
             } catch (err) {
                 console.error(err);
-                res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
+                const {
+                    status = constants.HTTP_CODES.INTERNAL_SERVER_ERROR,
+                    message,
+                } = err;
+                res.status(status).json(message || err);
             }
         }
     }

@@ -6,8 +6,8 @@ const User = require('../../src/models/user').model;
 const Tag = require('../../src/models/tag').model;
 const Collection = require('../../src/models/collection').model;
 const Story = require('../../src/models/story').model;
-const Attribute = require('../../src/models/attribute').model;
-const Chapter = require('../../src/models/chapter').model;
+// const Attribute = require('../../src/models/attribute').model;
+// const Chapter = require('../../src/models/chapter').model;
 const Sequence = require('../../src/models/sequence').model;
 const Option = require('../../src/models/option').model;
 const config = require('../../src/config');
@@ -117,22 +117,25 @@ That's for you to decide. Take Stanley's fate into your own hands as you guide h
         fromCollection: collection._id,
         tags: tags.map(t => t._id),
         tagsName: tags.map(t => t.name),
+        isAvailableOffline: true,
     });
     await story.save();
     return story;
 }
 
-async function createAttributes (story) {
-    let result = [];
-    const attribute = new Attribute({
-        name: 'Health',
-        isImportant: true,
-        startValue: 100,
-        story: story._id,
-    });
-    await attribute.save();
-    result.push(attribute);
-    return result;
+async function createAttributes () {
+    // This is an offline compatible story, so it won't have attributes.
+    return [];
+    // let result = [];
+    // const attribute = new Attribute({
+    //     name: 'Health',
+    //     isImportant: true,
+    //     startValue: 100,
+    //     story: story._id,
+    // });
+    // await attribute.save();
+    // result.push(attribute);
+    // return result;
 }
 
 const sequences = [

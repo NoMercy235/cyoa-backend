@@ -35,6 +35,7 @@ async function onQuickSearch (req) {
     const searchQuery = { $regex: new RegExp(`.*${quickSearch}.*`, 'i') };
     return await Story
         .find({
+            published: true,
             $or: [
                 { name: searchQuery },
                 { shortDescription: searchQuery },

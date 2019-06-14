@@ -14,6 +14,14 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query)
     return query;
 });
 
+sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push(async (req, query) => {
+    await checkAuthor(req);
+    query = query.populate([
+        { path: 'linkedEnding', select: ['_id', 'name'] },
+    ]);
+    return query;
+});
+
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req, item) => {
     await checkAuthor(req);
     item.story = req.params.story;

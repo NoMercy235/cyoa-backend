@@ -1,5 +1,6 @@
 const MODEL_NAMES = require('./model-names');
 const STORY = MODEL_NAMES.story;
+const SEQUENCE = MODEL_NAMES.sequence;
 const MODEL = MODEL_NAMES.attribute;
 
 const mongoose = require('mongoose');
@@ -11,6 +12,7 @@ const schema = new mongoose.Schema(
         startValue: { type: Number, default: 0 },
 
         story: { type: String, ref: STORY },
+        linkedEnding: { type: String, ref: SEQUENCE },
     },
     {
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
@@ -33,6 +35,7 @@ schema.statics.forPlayer = function (att) {
         name: att.name,
         value: att.startValue,
         isImportant: att.isImportant,
+        linkedEnding: att.linkedEnding,
         colorScheme: { background: 'white', text: 'black' },
     };
 };

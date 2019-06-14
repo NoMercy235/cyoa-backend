@@ -28,7 +28,7 @@ schema.index({ name: 1, story: 1 }, { unique: true });
 
 
 schema.statics.getAllowedFilters = function () {
-    return ['name', 'story', 'chapter'];
+    return ['name', 'story', 'chapter', 'isEnding'];
 };
 
 schema.statics.getAllowedSort = function () {

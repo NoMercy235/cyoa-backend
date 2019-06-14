@@ -16,6 +16,15 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push(async (req, qu
         .populate(['nextSeq']);
 });
 
+optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push(async (req, query) => {
+    await checkStory(req);
+    query = query.populate([
+        { path: 'nextSeq', select: ['_id', 'name'] },
+    ]);
+    return query;
+});
+
+
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req, item) => {
     await checkStory(req);
     item.sequence = req.params.sequence;

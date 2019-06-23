@@ -23,18 +23,9 @@ class BaseController {
         this.callbacks = initCallbacks();
     }
 
-    getIgnoreFields (...arr) {
-        return arr
-            .map(a => {
-                if (typeof a === 'string') a = a.split(',');
-                return (a || []).map(f => '-' + f).join(' ')
-            })
-            .filter(val => val);
-    }
-
     get () {
         return async (req, res) => {
-            const ignoreFields = this.getIgnoreFields(this.Resource.ignoreFieldsInList, req.query.ignoreFields);
+            const ignoreFields = BaseController.getIgnoreFields(this.Resource.ignoreFieldsInList, req.query.ignoreFields);
             let query = this.Resource.find({}, ignoreFields);
             query = this.filter.applyFilters(req, query);
             query = this.filter.applySorting(req, query);
@@ -46,15 +37,14 @@ class BaseController {
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_GET].map(cb => cb(req, items)));
                 res.json(items);
             } catch (err) {
-                console.error(err);
-                res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
+                BaseController.onError(err, res);
             }
         }
     }
 
     getOne () {
         return async (req, res) => {
-            const ignoreFields = this.getIgnoreFields(req.query.ignoreFields);
+            const ignoreFields = BaseController.getIgnoreFields(req.query.ignoreFields);
             let query = this.Resource.findOne(this.findByCb(req), ignoreFields);
             try {
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].map(cb => cb(req, query)));
@@ -63,8 +53,7 @@ class BaseController {
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_GET_ONE].map(cb => cb(req, item)));
                 res.json(item);
             } catch (err) {
-                console.error(err);
-                res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
+                BaseController.onError(err, res);
             }
         }
     }
@@ -78,8 +67,7 @@ class BaseController {
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE].map(cb => cb(res, dbItem)));
                 res.json(dbItem);
             } catch (err) {
-                console.error(err);
-                res.status(constants.HTTP_CODES.BAD_REQUEST).json(err);
+                BaseController.onError(err, res);
             }
         }
     }
@@ -96,8 +84,7 @@ class BaseController {
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE_MANY].map(cb => cb(res, dbItems)));
                 res.json(dbItems);
             } catch (err) {
-                console.error(err);
-                res.status(constants.HTTP_CODES.BAD_REQUEST).json(err);
+                BaseController.onError(err, res);
             }
         }
     }
@@ -115,8 +102,7 @@ class BaseController {
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].map(cb => cb(req, item)));
                 res.status(constants.HTTP_CODES.OK).json(item);
             } catch (err) {
-                console.error(err);
-                res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
+                BaseController.onError(err, res);
             }
         }
     }
@@ -133,8 +119,7 @@ class BaseController {
                 await Promise.all(this.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_REMOVE].map(cb => cb(req, item)));
                 res.status(constants.HTTP_CODES.OK).json(item);
             } catch (err) {
-                console.error(err);
-                res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
+                BaseController.onError(err, res);
             }
         }
     }
@@ -145,14 +130,27 @@ class BaseController {
                 const result = await cb(req, res);
                 res.status(constants.HTTP_CODES.OK).json(result);
             } catch (err) {
-                console.error(err);
-                const {
-                    status = constants.HTTP_CODES.INTERNAL_SERVER_ERROR,
-                    message,
-                } = err;
-                res.status(status).json(message || err);
+                BaseController.onError(err, res);
             }
         }
+    }
+
+    static getIgnoreFields (...arr) {
+        return arr
+            .map(a => {
+                if (typeof a === 'string') a = a.split(',');
+                return (a || []).map(f => '-' + f).join(' ')
+            })
+            .filter(val => val);
+    }
+
+    static onError (err, res) {
+        console.error(err);
+        const {
+            status = constants.HTTP_CODES.INTERNAL_SERVER_ERROR,
+            message,
+        } = err;
+        res.status(status).json(message || err);
     }
 }
 

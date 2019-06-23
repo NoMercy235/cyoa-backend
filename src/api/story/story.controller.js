@@ -24,6 +24,12 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query
     query.populate({ path: 'author', select: [ 'email', 'firstName', 'lastName' ] });
 });
 
+storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, item) => {
+    if (item.published) {
+        await checkIfStoryCanPublish(req);
+    }
+});
+
 async function checkIfStoryCanPublish (req) {
     const storyId = req.params.id;
     const story = await Story.findOne({ _id: storyId });

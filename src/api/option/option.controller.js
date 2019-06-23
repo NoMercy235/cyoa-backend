@@ -38,7 +38,6 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE].push(async (res, 
     // const sequence = await Sequence.findOne({ _id: res.req.params.sequence }).exec();
     sequence.options.push(item._id);
     await sequence.save();
-    console.log(nextSeq);
     item.nextSeq = nextSeq;
 });
 

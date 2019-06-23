@@ -40,10 +40,17 @@ const ERROR_MESSAGES = {
     resourceNotOwned: 'You do not own this resource',
 };
 
+const ERROR_CODES = {
+    noStartSeq: 'noStartSeq',
+    noEndSeq: 'noEndSeq',
+    noRouteToEndSeq: 'noRouteToEndSeq',
+};
+
 module.exports = {
     HTTP_METHODS,
     HTTP_TIMED_EVENTS,
     HTTP_CODES,
     TOKEN_EXPIRE_TIME,
     ERROR_MESSAGES,
+    ERROR_CODES,
 };

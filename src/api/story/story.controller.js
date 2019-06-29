@@ -1,6 +1,7 @@
 const BaseController = require('../common/base.controller');
 const Story = require('../../models/story').model;
 const Sequence = require('../../models/sequence').model;
+const Player = require('../../models/player').model;
 const constants = require('../common/constants');
 
 const findByCb = function (req) {
@@ -25,15 +26,43 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query
 });
 
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, item) => {
-    if (item.published) {
-        await checkIfStoryCanPublish(req);
-    }
+    await checkAuthor(req);
+    delete item.published;
 });
 
-async function checkIfStoryCanPublish (req) {
+async function checkAuthor(req) {
+    const story = await Story.findOne({ _id: req.params.id }).exec();
+    if (story.author !== req.user._id.toString()) {
+        throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
+    }
+}
+
+async function publishStory (req) {
+    await checkAuthor(req);
+
     const storyId = req.params.id;
+    const published = req.body.published;
     const story = await Story.findOne({ _id: storyId });
 
+    if (published) {
+        await checkIfStoryCanPublish(story);
+    } else {
+        await Player.deleteMany({ story: storyId });
+    }
+
+    story.published = published;
+    await story.save();
+    return story;
+}
+
+async function checkIfStoryCanPublishRoute (req) {
+    const storyId = req.params.id;
+    const story = await Story.findOne({ _id: storyId });
+    await checkIfStoryCanPublish(story);
+}
+
+
+async function checkIfStoryCanPublish (story) {
     let errorMessages = {};
 
     if (!story.startSeq) {
@@ -43,7 +72,7 @@ async function checkIfStoryCanPublish (req) {
     }
 
     const endSequences = await Sequence.find({
-        story: storyId,
+        story: story._id,
         isEnding: true,
     });
 
@@ -122,5 +151,6 @@ module.exports = {
     create: storyCtrl.create(),
     update: storyCtrl.update(),
     remove: storyCtrl.remove(),
-    checkIfStoryCanPublish: storyCtrl.createCustomHandler(checkIfStoryCanPublish),
+    publishStory: storyCtrl.createCustomHandler(publishStory),
+    checkIfStoryCanPublish: storyCtrl.createCustomHandler(checkIfStoryCanPublishRoute),
 };

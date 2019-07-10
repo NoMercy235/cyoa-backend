@@ -49,21 +49,22 @@ async function checkAuthor(req) {
     }
 }
 
-const updateOrder = async (req, res) => {
-    const sequences = [];
-    try {
-        await checkAuthor(req);
-        await Promise.all(req.body.map(async seq => {
-            const dbSeq = await Sequence.findOne({ _id: seq._id });
-            dbSeq.order = seq.order;
-            sequences.push(dbSeq);
-            return dbSeq.save();
-        }));
-        res.json(sequences);
-    } catch (err) {
-        console.error(err);
-        res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
-    }
+const updateOrder = async (req) => {
+    await checkAuthor(req);
+    const { seqId, ahead } = req.body;
+    const seqOrder = ahead ? 1 : -1;
+
+    const seq = await Sequence.findOne({ _id: seqId });
+    const adjacentSeq = await Sequence.findOne({ story: seq.story, order: seq.order + seqOrder });
+
+    const tmp = seq.order;
+    seq.order = adjacentSeq.order;
+    adjacentSeq.order = tmp;
+
+    return await Promise.all([
+        seq.save(),
+        adjacentSeq.save(),
+    ]);
 };
 
 module.exports = {
@@ -72,5 +73,5 @@ module.exports = {
     create: sequenceCtrl.create(),
     update: sequenceCtrl.update(),
     remove: sequenceCtrl.remove(),
-    updateOrder: updateOrder,
+    updateOrder: sequenceCtrl.createCustomHandler(updateOrder),
 };

@@ -127,7 +127,7 @@ class BaseController {
     createCustomHandler (cb) {
         return async (req, res) => {
             try {
-                const result = await cb(req, res);
+                const result = await cb(req, res, this);
                 res.status(constants.HTTP_CODES.OK).json(result);
             } catch (err) {
                 BaseController.onError(err, res);

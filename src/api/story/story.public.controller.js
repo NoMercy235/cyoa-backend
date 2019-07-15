@@ -27,13 +27,13 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query
         });
 });
 
-async function onQuickSearch (req) {
+async function onQuickSearch (req, res, baseCtrl) {
     const {
         quickSearch,
         sort = Story.getDefaultSort(),
     } = req.query;
     const searchQuery = { $regex: new RegExp(`.*${quickSearch}.*`, 'i') };
-    return await Story
+    const query = Story
         .find({
             published: true,
             $or: [
@@ -43,8 +43,10 @@ async function onQuickSearch (req) {
                 { authorShort: searchQuery },
             ],
         })
-        .sort({ [sort.field]: sort.order })
-        .exec();
+        .sort({ [sort.field]: sort.order });
+    return req.query.pagination
+        ? await baseCtrl.filter.applyPagination(req.query.pagination, query)
+        : await query.exec();
 }
 
 async function offlineStory (req) {

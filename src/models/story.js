@@ -44,7 +44,7 @@ schema.statics.getAllowedSort = function () {
     return ['name', 'created_at'];
 };
 
-schema.statics.ignoreFieldsInList = ['coverPic'];
+schema.statics.ignoreFieldsInList = [];
 
 module.exports = {
     model: mongoose.model(MODEL, schema),

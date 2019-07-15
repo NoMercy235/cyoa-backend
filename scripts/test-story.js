@@ -180,6 +180,8 @@ function createConsequences (attributes, nr) {
     // resources, and this messes up the app.
     await Promise.all(dbOptions.map(async o => {
         const seq = await Sequence.findOne({ _id: o.sequence }).exec();
+        // Fix because sometimes this fails for whatever reason
+        if (!seq) return;
         seq.options.push(o._id);
         return seq.save();
     }));

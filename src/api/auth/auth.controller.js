@@ -13,9 +13,11 @@ controller.authenticate = (req, res) => {
         if (!user || !user.comparePassword(req.body.password)) {
             res.status(constants.HTTP_CODES.UNAUTHORIZED).json({ message: 'Authentication failed. Username or password are incorrect' });
         } else if (user) {
-            let token = jwt.sign({ email: user.email }, config.secret, {
-                expiresIn: constants.TOKEN_EXPIRE_TIME,
-            });
+            const token = jwt.sign(
+                { _id: user._id, email: user.email },
+                config.secret,
+                { expiresIn: constants.TOKEN_EXPIRE_TIME }
+            );
 
             res.status(constants.HTTP_CODES.OK).json({
                 user: user.safeToSend(true),
@@ -26,14 +28,16 @@ controller.authenticate = (req, res) => {
 };
 
 controller.register = (req, res) => {
-    let user = User(req.body);
+    const user = User(req.body);
     user.save((err) => {
         if (err) {
             res.status(constants.HTTP_CODES.BAD_REQUEST).json(err);
         } else {
-            let token = jwt.sign({ email: user.email }, config.secret, {
-                expiresIn: constants.TOKEN_EXPIRE_TIME,
-            });
+            const token = jwt.sign(
+                { _id: user._id,  email: user.email },
+                config.secret,
+                { expiresIn: constants.TOKEN_EXPIRE_TIME }
+            );
 
             res.status(constants.HTTP_CODES.OK).json({
                 user: user.safeToSend(true),

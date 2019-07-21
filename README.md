@@ -5,17 +5,6 @@ This project was started as a common idea expressed by the members of the [Time 
 
 It will allow the users to both create and view stories written in the CYOA-style. For the first release, we're only planning on having the basic functions up and working, but stay tuned in the future for more improvements (if the project actually turns out to be usable).
 
-Backend features:
-
-- [x] Register/login users (use JWT for authentication)
-- [x] Main resources
-    - [x] CRUD for story
-    - [x] CRUD the sequences
-    - [x] CRUD for attributes of a story
-    - [x] CRUD for player
-- [x] Copy the story's attributes with their default value to the player when a user starts reading a story for the first time.
-- [x] Create options with consequences on a sequence.
-- [ ] Create lose condition for stories.
 
 Getting Started
 ---------------
@@ -79,8 +68,3 @@ docker-compose up -d
 docker-compose down
 
 ```
-
-License
--------
-
-MIT

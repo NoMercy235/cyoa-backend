@@ -149,8 +149,9 @@ class BaseController {
         const {
             status = constants.HTTP_CODES.INTERNAL_SERVER_ERROR,
             message,
+            body,
         } = err;
-        res.status(status).json(message || err);
+        res.status(status).json(message || body || err);
     }
 }
 

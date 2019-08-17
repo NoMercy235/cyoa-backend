@@ -28,7 +28,6 @@
     "jsonwebtoken": "^8.3.0",
     "moment": "^2.20.1",
     "mongoose": "^4.13.9",
-    "mongoose-unique-validator": "^2.0.2",
     "morgan": "^1.9.0",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0"

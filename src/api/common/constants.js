@@ -29,6 +29,7 @@ const HTTP_CODES = {
     UNAUTHORIZED: 401,
     FORBIDDEN: 403,
     NOT_FOUND: 404,
+    CONFLICT: 409,
     INTERNAL_SERVER_ERROR: 500,
     NOT_IMPLEMENTED: 501,
 };
@@ -38,12 +39,15 @@ const TOKEN_EXPIRE_TIME = 60 * 60 * 24 * 30;
 
 const ERROR_MESSAGES = {
     resourceNotOwned: 'You do not own this resource',
+    nameNotUnique: 'Name must be unique',
 };
 
 const ERROR_CODES = {
     noStartSeq: 'noStartSeq',
     noEndSeq: 'noEndSeq',
     noRouteToEndSeq: 'noRouteToEndSeq',
+    mongoError: 'MongoError',
+    DUPLICATE_VALUE: 11000,
 };
 
 module.exports = {

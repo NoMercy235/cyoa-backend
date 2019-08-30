@@ -19,6 +19,7 @@ const schema = new mongoose.Schema(
         published: { type: Boolean },
         coverPic: { type: String, default: null },
         isAvailableOffline: { type: Boolean, default: false },
+        readTimes: { type: Number, default: 0 },
 
         chapters: [{ type: String, ref: CHAPTER }],
         tags: [{ type: String, ref: TAG, required: true }],

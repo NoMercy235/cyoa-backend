@@ -48,7 +48,13 @@ async function getOrCreate (req) {
             lastStorySequence: story.startSeq,
             attributes: attributes.map(Attribute.forPlayer),
         });
-        await playerObj.save();
+
+        story.readTimes ++;
+
+        await Promise.all([
+            playerObj.save(),
+            story.save(),
+        ]);
     }
     return playerObj;
 }

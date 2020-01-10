@@ -10,25 +10,57 @@ const findByCb = function (req) {
 
 const playerCtrl = new BaseController(Player, findByCb);
 
-function checkOwnership (req, playerObj) {
-    const base64User = Buffer.from(req.headers.authorization.split('.')[1], 'base64');
-    const user = JSON.parse(base64User.toString());
+function getUserFromToken (req) {
+    if (!req.headers.authorization) return;
 
-    if (playerObj.player !== user._id) {
+    const base64User = Buffer.from(req.headers.authorization.split('.')[1], 'base64');
+    return JSON.parse(base64User.toString());
+}
+
+function checkOwnership (req, id) {
+    if (!req.headers.authorization) return;
+
+    const user = getUserFromToken(req);
+
+    if (id !== user._id) {
         throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
     }
 }
 
 async function setPlayerForStory (req) {
-    const playerObj = await Player.findOne({ player: req.params.player, story: req.params.story });
+    const { story, player } = req.params;
 
-    checkOwnership(req, playerObj);
+    const playerObj = await Player.findOne({ story, player });
+    const isLocalPlayer = Number.isInteger(+playerObj.player);
 
-    playerObj.lastStorySequence = req.body.lastStorySequence;
-    playerObj.attributes = req.body.attributes;
+    !isLocalPlayer && checkOwnership(req, playerObj.player);
 
+    const { attributes, lastStorySequence } = req.body;
+
+    if (isLocalPlayer) {
+        const user = getUserFromToken(req);
+        const maybeUserPlayer = await Player.findOne({ story, player: user._id });
+
+        if (maybeUserPlayer) {
+            maybeUserPlayer.lastStorySequence = lastStorySequence;
+            maybeUserPlayer.attributes = attributes;
+            await maybeUserPlayer.save();
+            return maybeUserPlayer;
+        }
+
+        const newPlayer = new Player({
+            attributes,
+            lastStorySequence,
+            story: playerObj.story,
+            player: user._id,
+        });
+        await newPlayer.save();
+        return newPlayer;
+    }
+
+    playerObj.lastStorySequence = lastStorySequence;
+    playerObj.attributes = attributes;
     await playerObj.save();
-
     return playerObj;
 }
 
@@ -62,6 +94,7 @@ async function getOrCreate (req) {
 async function updateAttributes (req) {
     const query = { _id: req.params.id };
     const player = await Player.findOne(query).exec();
+    checkOwnership(req, player.player);
 
     player.lastStorySequence = req.body.lastStorySequence;
     const newAttributes = req.body.attributes || [];

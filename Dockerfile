@@ -20,4 +20,4 @@ EXPOSE $PORT
 EXPOSE $HTTP_PORT
 
 # Start command as per package.json
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["npm", "start:prod"]

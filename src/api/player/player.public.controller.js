@@ -39,7 +39,14 @@ async function setPlayerForStory (req) {
 
     if (isLocalPlayer) {
         const user = getUserFromToken(req);
-        const maybeUserPlayer = await Player.findOne({ story, player: user._id });
+
+        /**
+         * If the user is logged in, then search for their player, otherwise
+         * just look for the local player. This one is not safe and is guarded
+         * just by randomness (since its generated on the frontend)
+         */
+        const playerToSearch = user ? user._id : player;
+        const maybeUserPlayer = await Player.findOne({ story, player: playerToSearch });
 
         if (maybeUserPlayer) {
             maybeUserPlayer.lastStorySequence = lastStorySequence;

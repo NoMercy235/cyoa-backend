@@ -8,4 +8,5 @@ module.exports = {
     player: 'Player',
     tag: 'Tag',
     chapter: 'Chapter',
+    rating: 'Rating',
 };

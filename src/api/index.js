@@ -15,5 +15,6 @@ module.exports = {
         option: { prefix: '/api/option', routes: require('./option/option.routes') },
         attribute: { prefix: '/api/attribute', routes: require('./attribute/attribute.routes') },
         chapter: { prefix: '/api/chapter', routes: require('./chapter/chapter.routes') },
+        rating: { prefix: '/api/rating', routes: require('./rating/rating.routes') },
     },
 };

@@ -12,6 +12,7 @@ const schema = new mongoose.Schema({
     password: { type: String, required: true },
     isAdmin: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
+    isEmailVerified: { type: Boolean, default: false },
 });
 
 schema.pre('save', function (next) {

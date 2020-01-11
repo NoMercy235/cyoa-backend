@@ -9,4 +9,5 @@ module.exports = {
     tag: 'Tag',
     chapter: 'Chapter',
     rating: 'Rating',
+    emailVerifyToken: 'EmailVerifyToken',
 };

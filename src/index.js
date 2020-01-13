@@ -7,15 +7,20 @@ const mongoose = require('mongoose');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const io = require('socket.io');
+const http = require('http');
 
 // For debugging
 // mongoose.set('debug', true);
 
 const config = require('./config');
 const passportConfig = require('./middleware/passport');
+const { handleSocket } = require('./sockets/setup');
+const { SocketEvents } = require('./sockets/constants');
 
 const port = process.env.PORT || 8080;
 const httpsPort = process.env.HTTPS_PORT || 443;
+const allowedOrigins = 'localhost:* *.rigamo.xyz';
 
 // Overriding the deprecated "Promise" module of mongoose.
 // For more information see: https://github.com/Automattic/mongoose/issues/4291
@@ -37,9 +42,14 @@ Object.keys(apiRoutes).forEach((key) => {
     app.use(apiRoutes[key].prefix, apiRoutes[key].routes);
 });
 
-app.listen(port, () => {
+const httpServer = http.createServer(app);
+
+httpServer.listen(port, () => {
     console.log(`HTTP Server started on port: ${port}`);
 });
+
+ioServer = io( httpServer, { origins: allowedOrigins });
+ioServer.on(SocketEvents.Connection, handleSocket);
 
 // HTTPS server config
 try {
@@ -53,9 +63,12 @@ try {
         cert: serverCert,
     };
 
-    https.createServer(options, app).listen(httpsPort, () => {
+    const httpsServer = https.createServer(options, app);
+    httpsServer.listen(httpsPort, () => {
         console.log(`HTTPS Server started on port: ${httpsPort}`);
     });
+    const iosServer = io(httpsServer, { origins: allowedOrigins });
+    iosServer.on(SocketEvents.Connection, handleSocket);
 } catch (e) {
     console.log('No certs for HTTPS');
 }

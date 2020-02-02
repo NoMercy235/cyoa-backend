@@ -35,7 +35,7 @@ const sendForgotPasswordEmail = sendEmail => options => {
         html: parseTemplate(options),
     };
     sendEmail(mailOptions);
-    console.log(`Email verification sent to: ${options.destination}`);
+    console.log(`Forgot password email sent to: ${options.destination}`);
     resetPasswordTokens[options.destination] = {
         token: options.token,
         time: new Date().getTime(),

@@ -3,7 +3,7 @@ const SocketEvents = {
     Disconnect: 'disconnect',
     UserOnline: 'USER_ONLINE',
     UserOffline: 'USER_OFFLINE',
-    SendUsersOnline: 'SEND_USERS_ONLINE',
+    UsersOnline: 'USERS_ONLINE',
 };
 
 module.exports = {

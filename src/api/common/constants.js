@@ -40,6 +40,7 @@ const TOKEN_EXPIRE_TIME = 60 * 60 * 24 * 30;
 const ERROR_MESSAGES = {
     resourceNotOwned: 'You do not own this resource',
     nameNotUnique: 'Name must be unique',
+    tokenExpired: 'Token is no longer valid',
 };
 
 const ERROR_CODES = {

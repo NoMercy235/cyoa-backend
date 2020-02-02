@@ -8,5 +8,6 @@ module.exports = {
         from: 'from',
         email: 'fromEmail',
         password: 'somePassword',
-    }
+    },
+    lostPasswordTokenExpiry: 60 * 1000, // 60 seconds
 };

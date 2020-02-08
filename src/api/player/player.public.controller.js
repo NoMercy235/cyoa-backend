@@ -3,10 +3,7 @@ const Attribute = require('../../models/attribute').model;
 const Player = require('../../models/player').model;
 const Story = require('../../models/story').model;
 const constants = require('../common/constants');
-
-const findByCb = function (req) {
-    return { _id: req.params.id };
-};
+const { searchById, findByCb } = require('../utils');
 
 const playerCtrl = new BaseController(Player, findByCb);
 
@@ -73,7 +70,7 @@ async function setPlayerForStory (req) {
 
 async function getOrCreate (req) {
     const player = req.query.playerId;
-    const query = { player, story: req.params.story };
+    const query = { player, ...searchById(req.params.story) };
 
     let playerObj = await Player.findOne(query).exec();
 
@@ -83,7 +80,7 @@ async function getOrCreate (req) {
 
         playerObj = new Player({
             player,
-            story: story._id,
+            story: story.id,
             lastStorySequence: story.startSeq,
             attributes: attributes.map(Attribute.forPlayer),
         });
@@ -99,7 +96,7 @@ async function getOrCreate (req) {
 }
 
 async function updateAttributes (req) {
-    const query = { _id: req.params.id };
+    const query = searchById(req.params.id);
     const player = await Player.findOne(query).exec();
     checkOwnership(req, player.player);
 

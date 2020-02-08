@@ -1,10 +1,7 @@
 const BaseController = require('../common/base.controller');
 const Sequence = require('../../models/sequence').model;
 const constants = require('../common/constants');
-
-const findByCb = function (req) {
-    return { _id: req.params.id };
-};
+const { findByCb } = require('../utils');
 
 const sequenceCtrl = new BaseController(Sequence, findByCb);
 

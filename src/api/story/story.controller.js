@@ -3,10 +3,7 @@ const Story = require('../../models/story').model;
 const Sequence = require('../../models/sequence').model;
 const Player = require('../../models/player').model;
 const constants = require('../common/constants');
-
-const findByCb = function (req) {
-    return { _id: req.params.id };
-};
+const { searchById, findByCb } = require('../utils');
 
 const storyCtrl = new BaseController(Story, findByCb);
 
@@ -31,7 +28,8 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, 
 });
 
 async function checkAuthor(req) {
-    const story = await Story.findOne({ _id: req.params.id }).exec();
+    const query = searchById(req.params.id);
+    const story = await Story.findOne(query).exec();
     if (story.author !== req.user._id.toString()) {
         throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
     }
@@ -42,7 +40,7 @@ async function publishStory (req) {
 
     const storyId = req.params.id;
     const published = req.body.published;
-    const story = await Story.findOne({ _id: storyId });
+    const story = await Story.findOne(searchById(storyId));
 
     if (published) {
         await checkIfStoryCanPublish(story);
@@ -57,7 +55,7 @@ async function publishStory (req) {
 
 async function checkIfStoryCanPublishRoute (req) {
     const storyId = req.params.id;
-    const story = await Story.findOne({ _id: storyId });
+    const story = await Story.findOne(searchById(storyId));
     await checkIfStoryCanPublish(story);
 }
 
@@ -72,7 +70,7 @@ async function checkIfStoryCanPublish (story) {
     }
 
     const endSequences = await Sequence.find({
-        story: story._id,
+        story: story.id || story._id,
         isEnding: true,
     });
 
@@ -89,9 +87,9 @@ async function checkIfStoryCanPublish (story) {
     }
 }
 
-async function getSequenceById (id) {
-    return await Sequence
-        .findOne({ _id: id })
+function getSequenceById (id) {
+    return Sequence
+        .findOne(searchById(id))
         .populate(['options']);
 }
 

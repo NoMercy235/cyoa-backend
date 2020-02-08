@@ -10,6 +10,14 @@ function handleUniqueError (body) {
     };
 }
 
+function generateId (modelName) {
+    return function (next) {
+        this.id = `${modelName.toLowerCase()}-${this._id}`;
+        next();
+    };
+}
+
 module.exports = {
     handleUniqueError,
+    generateId,
 };

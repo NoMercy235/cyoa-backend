@@ -2,7 +2,10 @@ const BaseController = require('../common/base.controller');
 const Sequence = require('../../models/sequence').model;
 const Story = require('../../models/story').model;
 const constants = require('../common/constants');
-const { searchById, findByCb } = require('../utils');
+
+const findByCb = function (req) {
+    return { _id: req.params.id };
+};
 
 const sequenceCtrl = new BaseController(Sequence, findByCb);
 
@@ -40,7 +43,7 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (re
 });
 
 async function checkAuthor(req) {
-    const story = await Story.findOne(searchById(req.params.story)).exec();
+    const story = await Story.findOne({ _id: req.params.story }).exec();
     if (story.author !== req.user._id.toString()) {
         throw { message: constants.ERROR_MESSAGES.resourceNotOwned }
     }
@@ -51,7 +54,7 @@ const updateOrder = async (req) => {
     const { seqId, ahead } = req.body;
     const seqOrder = ahead ? 1 : -1;
 
-    const seq = await Sequence.findOne(searchById(seqId));
+    const seq = await Sequence.findOne({ _id: seqId });
     const adjacentSeq = await Sequence.findOne({ story: seq.story, order: seq.order + seqOrder });
 
     const tmp = seq.order;

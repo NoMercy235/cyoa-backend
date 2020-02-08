@@ -3,9 +3,12 @@ const Attribute = require('../../models/attribute').model;
 const Story = require('../../models/story').model;
 const Option = require('../../models/option').model;
 const constants = require('../common/constants');
-const { searchById } = require('../utils');
 
-const sequenceCtrl = new BaseController(Attribute, searchById);
+const findByCb = function (req) {
+    return { _id: req.params.id };
+};
+
+const sequenceCtrl = new BaseController(Attribute, findByCb);
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) => {
     query = query.find({ story: req.params.story });
@@ -15,7 +18,7 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query)
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push(async (req, query) => {
     await checkAuthor(req);
     query = query.populate([
-        { path: 'linkedEnding', select: ['_id', 'id', 'name'] },
+        { path: 'linkedEnding', select: ['_id', 'name'] },
     ]);
     return query;
 });
@@ -51,8 +54,9 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (re
 
 async function updateOptions (req, updateCb) {
     const storyId = req.params.story;
+    const attrId = req.params.id;
 
-    const attr = await Attribute.findOne(searchById(req));
+    const attr = await Attribute.findOne({ _id: attrId });
 
     const options = await Option.find({ story: storyId });
     await Promise.all(
@@ -61,7 +65,7 @@ async function updateOptions (req, updateCb) {
 }
 
 async function checkAuthor(req) {
-    const story = await Story.findOne(searchById(req.params.story)).exec();
+    const story = await Story.findOne({ _id: req.params.story }).exec();
     if (story.author !== req.user._id.toString()) {
         throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
     }

@@ -40,19 +40,20 @@ chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, qu
 chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, item) => {
     await checkAuthor(req, item);
 
-    // On update, check to see if the parentChapter has changed.
-    const dbChapter = await getChapter(item._id);
-    if (item.parentChapter === dbChapter.parentChapter) return;
-
-    // If it did, remove it from the subChapters list of parentChapter.
-    const oldParentChapter = await getChapter(dbChapter.parentChapter);
-    deleteChapterFromSubchapters(oldParentChapter, item._id);
-    await oldParentChapter.save();
-
-    // And add it to the new parentChapter's list
-    const newParentChapter = await getChapter(item.parentChapter);
-    newParentChapter.subChapters.push(item._id);
-    await newParentChapter.save();
+    // IMPORTANT: The logic is flawed and it will be reworked
+    // // On update, check to see if the parentChapter has changed.
+    // const dbChapter = await getChapter(item._id);
+    // if (item.parentChapter === dbChapter.parentChapter) return;
+    //
+    // // If it did, remove it from the subChapters list of parentChapter.
+    // const oldParentChapter = await getChapter(dbChapter.parentChapter);
+    // deleteChapterFromSubchapters(oldParentChapter, item._id);
+    // await oldParentChapter.save();
+    //
+    // // And add it to the new parentChapter's list
+    // const newParentChapter = await getChapter(item.parentChapter);
+    // newParentChapter.subChapters.push(item._id);
+    // await newParentChapter.save();
 });
 
 chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req, item) => {

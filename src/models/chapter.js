@@ -10,7 +10,7 @@ const MODEL = MODEL_NAMES.chapter;
 const mongoose = require('mongoose');
 const schema = new mongoose.Schema(
     {
-        name: { type: String, required: true, unique: true },
+        name: { type: String, required: true },
         description: { type: String },
 
         author: { type: String, ref: USER, required: true },
@@ -22,6 +22,8 @@ const schema = new mongoose.Schema(
         usePushEach: true,
     }
 );
+
+schema.index({ name: 1, story: 1, author: 1 }, { unique: true });
 
 schema.post('save', handleUniqueError({ message: ERROR_MESSAGES.nameNotUnique }));
 

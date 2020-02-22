@@ -7,6 +7,7 @@ module.exports = {
         pSequence: { prefix: '/public/sequence', routes: require('./sequence/sequence.public.routes') },
         pPlayer: { prefix: '/public/player', routes: require('./player/player.public.routes') },
         pChapter: { prefix: '/public/chapter', routes: require('./chapter/chapter.public.routes') },
+        pUser: { prefix: '/public/user', routes: require('./user/user.public.routes') },
 
         user: { prefix: '/api/user', routes: require('./user/user.routes') },
         collection: { prefix: '/api/collection', routes: require('./collection/collection.routes') },

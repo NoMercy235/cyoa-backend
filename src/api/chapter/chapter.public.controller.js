@@ -9,14 +9,8 @@ const findByCb = function (req) {
 const chaptersCtrl = new BaseController(Chapter, findByCb);
 
 chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) => {
-    query = query
-        .find({ story: req.params.story })
-        .populate(['subChapters']);
+    query = query.find({ story: req.params.story });
     return query;
-});
-
-chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query) => {
-    query.populate(['subChapters']);
 });
 
 module.exports = {

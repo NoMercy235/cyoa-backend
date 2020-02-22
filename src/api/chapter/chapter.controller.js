@@ -15,11 +15,6 @@ chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push((req, ite
 });
 
 chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE].push(async (res, item) => {
-    if (item.parentChapter) {
-        const parentChapter = await getChapter(item.parentChapter);
-        parentChapter.subChapters.push(item._id);
-        await parentChapter.save();
-    }
     const story = await Story.findOne({ _id: item.story }).exec();
     story.chapters.push(item._id);
     await story.save();
@@ -33,55 +28,18 @@ chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query)
     return query;
 });
 
-chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query) => {
-    query.populate(['subChapters']);
-});
-
 chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, item) => {
     await checkAuthor(req, item);
-
-    // IMPORTANT: The logic is flawed and it will be reworked
-    // // On update, check to see if the parentChapter has changed.
-    // const dbChapter = await getChapter(item._id);
-    // if (item.parentChapter === dbChapter.parentChapter) return;
-    //
-    // // If it did, remove it from the subChapters list of parentChapter.
-    // const oldParentChapter = await getChapter(dbChapter.parentChapter);
-    // deleteChapterFromSubchapters(oldParentChapter, item._id);
-    // await oldParentChapter.save();
-    //
-    // // And add it to the new parentChapter's list
-    // const newParentChapter = await getChapter(item.parentChapter);
-    // newParentChapter.subChapters.push(item._id);
-    // await newParentChapter.save();
 });
 
 chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req, item) => {
     await checkAuthor(req, item);
 });
 
-chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_REMOVE].push(async (req, item) => {
-    if (item.parentChapter) {
-        const parentChapter = await getChapter(item.parentChapter);
-        deleteChapterFromSubchapters(parentChapter, item._id);
-        await parentChapter.save();
-    }
-});
-
 async function checkAuthor(req, item) {
     if (item.author === req.user._id) {
         throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
     }
-}
-
-async function getChapter(id) {
-    return await Chapter.findOne({ _id: id }).exec();
-}
-
-function deleteChapterFromSubchapters(chapter, deletedChapterId) {
-    chapter.subChapters = chapter.subChapters.filter(chapterId => {
-        return chapterId.toString() !== deletedChapterId.toString();
-    });
 }
 
 module.exports = {

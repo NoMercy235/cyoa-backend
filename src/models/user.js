@@ -5,15 +5,21 @@ const MODEL = MODEL_NAMES.user;
 const SALT_WORK_FACTOR = 10;
 
 const mongoose = require('mongoose');
-const schema = new mongoose.Schema({
-    firstName: { type: String, default: '' },
-    lastName: { type: String, default: '' },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    isAdmin: { type: Boolean, default: false },
-    isActive: { type: Boolean, default: true },
-    isEmailVerified: { type: Boolean, default: false },
-});
+const schema = new mongoose.Schema(
+    {
+        firstName: { type: String, required: true },
+        lastName: { type: String, required: true },
+        email: { type: String, required: true, unique: true },
+        password: { type: String, required: true },
+        description: { type: String, default: '' },
+        isAdmin: { type: Boolean, default: false },
+        isActive: { type: Boolean, default: true },
+        isEmailVerified: { type: Boolean, default: false },
+    },
+    {
+        timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+    }
+);
 
 schema.pre('save', function (next) {
     if (!this.isModified('password')) {

@@ -24,6 +24,7 @@
   "author": "Alexandru Florian Barascu <alex.florin235@yahoo.com>",
   "license": "MIT",
   "dependencies": {
+    "base64-img": "^1.0.4",
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",

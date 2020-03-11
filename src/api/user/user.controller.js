@@ -1,3 +1,5 @@
+const base64Img = require('base64-img');
+
 const BaseController = require('../common/base.controller');
 const User = require('../../models/user').model;
 const constants = require('../common/constants');
@@ -28,6 +30,23 @@ async function checkPermission (req) {
     }
 }
 
+async function uploadProfilePicture (req) {
+    const {
+        user,
+        body: { profile }
+    } = req;
+
+    const path = base64Img.imgSync(
+        profile,
+        constants.UPLOAD_PATHS.Profile,
+        user._id,
+    );
+
+    const dbUser = await User.findOne({ _id: user._id });
+    dbUser.profilePicture = path.split('/').pop();
+    await dbUser.save();
+}
+
 module.exports = {
     get: userController.get(),
     getOne: userController.getOne(),
@@ -35,4 +54,5 @@ module.exports = {
     update: userController.update(),
     remove: userController.remove(),
     getUserWithToken: getUserWithToken,
+    uploadProfilePicture: userController.createCustomHandler(uploadProfilePicture),
 };

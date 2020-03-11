@@ -1,3 +1,5 @@
+const path = require('path');
+
 const HTTP_METHODS = {
     GET: 'GET',
     POST: 'POST',
@@ -51,6 +53,12 @@ const ERROR_CODES = {
     DUPLICATE_VALUE: 11000,
 };
 
+const BASE_UPLOAD_PATH = path.join( process.cwd(), 'uploads');
+const UPLOAD_PATHS = {
+    Base: BASE_UPLOAD_PATH,
+    Profile: path.join(BASE_UPLOAD_PATH, 'profile'),
+};
+
 module.exports = {
     HTTP_METHODS,
     HTTP_TIMED_EVENTS,
@@ -58,4 +66,5 @@ module.exports = {
     TOKEN_EXPIRE_TIME,
     ERROR_MESSAGES,
     ERROR_CODES,
+    UPLOAD_PATHS,
 };

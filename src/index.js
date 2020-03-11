@@ -28,7 +28,7 @@ mongoose.Promise = global.Promise;
 // Providing the 'useMongoClient' property to get rid of the deprecated message.
 mongoose.connect(config.database, { useMongoClient: true, keepAlive: true });
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '2mb' }));
 
 app.use(cors());

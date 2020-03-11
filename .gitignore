@@ -8,3 +8,4 @@ src/config.js
 database
 *.ignoreme*
 /certs*
+/uploads

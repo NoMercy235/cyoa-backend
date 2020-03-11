@@ -12,6 +12,7 @@ const schema = new mongoose.Schema(
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
         description: { type: String, default: '' },
+        profilePicture: { type: String, default: '' },
         isAdmin: { type: Boolean, default: false },
         isActive: { type: Boolean, default: true },
         isEmailVerified: { type: Boolean, default: false },

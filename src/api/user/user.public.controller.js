@@ -1,6 +1,9 @@
+const base64Img = require('base64-img');
+
 const BaseController = require('../common/base.controller');
 const Story = require('../../models/story').model;
 const User = require('../../models/user').model;
+const constants = require('../common/constants');
 
 const findByCb = function (req) {
     return { email: req.params.email }
@@ -15,6 +18,20 @@ async function getUserOverview (req) {
     }
 }
 
+async function getProfilePicture (req) {
+    const user = await User.findOne({ _id: req.params.id });
+    const path = `${constants.UPLOAD_PATHS.Profile}/${user.profilePicture}`;
+    try {
+        const img = base64Img.base64Sync(path);
+        return {
+            profile: img,
+        };
+    } catch (e) {
+        throw { status: constants.HTTP_CODES.NOT_FOUND };
+    }
+}
+
 module.exports = {
     getUserOverview: userCtrl.createCustomHandler(getUserOverview),
+    getProfilePicture: userCtrl.createCustomHandler(getProfilePicture),
 };

@@ -13,7 +13,10 @@ const userCtrl = new BaseController(User, findByCb);
 
 async function getUserOverview ({ params: { id: userId } }) {
     const user = await User.findOne({ _id: userId }).exec();
-    const storiesWritten = await Story.count({ author: userId }).exec();
+    const storiesWritten = await Story.count({
+        author: userId,
+        published: true,
+    });
     return {
         user: user.safeToSend(),
         storiesWritten

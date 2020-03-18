@@ -17,7 +17,6 @@ const transport = nodemailer.createTransport({
 });
 
 async function sendEmail(mailOptions) {
-    console.log('Sending email...');
     try {
         await transport.sendMail(mailOptions);
         transport.close();

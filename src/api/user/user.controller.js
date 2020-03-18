@@ -1,6 +1,7 @@
 const base64Img = require('base64-img');
 
 const BaseController = require('../common/base.controller');
+const Story = require('../../models/story').model;
 const User = require('../../models/user').model;
 const constants = require('../common/constants');
 
@@ -17,6 +18,16 @@ userController.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (
     delete body.isEmailVerified;
     query = query.select('-password');
     return query
+});
+
+userController.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].push(async (req, item) => {
+    const stories = await Story.find({ author: item._id });
+    await Promise.all(
+        stories.map(story => {
+            story.authorShort = `${item.firstName} ${item.lastName}`;
+            return story.save();
+        })
+    )
 });
 
 function getUserWithToken (req, res) {

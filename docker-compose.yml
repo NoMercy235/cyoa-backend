@@ -9,17 +9,6 @@ services:
         ports:
             - "4208:8080"
             - "4209:443"
-        networks:
-            - cyoa-network
-    mongo-db:
-        container_name: mongo-db
-        image: mongo
-        volumes:
-          - ./database:/data/db
-        ports:
-            - "27017:27017"
-        networks:
-            - cyoa-network
 
 networks:
     cyoa-network:

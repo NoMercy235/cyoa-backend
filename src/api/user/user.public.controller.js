@@ -11,9 +11,11 @@ const findByCb = function (req) {
 
 const userCtrl = new BaseController(User, findByCb);
 
-async function getUserOverview (req) {
-    const storiesWritten = await Story.count({ author: req.params.id }).exec();
+async function getUserOverview ({ params: { id: userId } }) {
+    const user = await User.findOne({ _id: userId }).exec();
+    const storiesWritten = await Story.count({ author: userId }).exec();
     return {
+        user: user.safeToSend(),
         storiesWritten
     }
 }

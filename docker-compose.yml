@@ -10,7 +10,7 @@ services:
             - "4208:8080"
             - "4209:443"
         volumes:
-            - ".uploads:/uploads"
+            - "./uploads:/uploads"
 
 networks:
     cyoa-network:

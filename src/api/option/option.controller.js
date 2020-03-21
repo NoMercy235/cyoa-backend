@@ -17,7 +17,7 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push(async (req, qu
 });
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push(async (req, query) => {
-    await checkStory(req);
+    await checkSequence(req);
     query = query.populate([
         { path: 'nextSeq', select: ['_id', 'name'] },
     ]);
@@ -26,7 +26,7 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push(async (req
 
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req, item) => {
-    await checkStory(req);
+    await checkSequence(req);
     item.sequence = req.params.sequence;
 });
 
@@ -42,7 +42,7 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE].push(async (res, 
 });
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {
-    await checkStory(req);
+    await checkSequence(req);
 });
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].push(async (req, item) => {
@@ -50,11 +50,11 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].push(async (req, 
 });
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req) => {
-    await checkStory(req);
+    await checkSequence(req);
 });
 
 optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE_MANY].push(async (req, items) => {
-    await checkStory(req);
+    await checkSequence(req);
     items.forEach(item => {
         item.sequence = req.params.sequence;
     });
@@ -66,12 +66,22 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE_MANY].push(async (
     await sequence.save();
 });
 
-async function checkStory(req) {
-    const sequence = await Sequence.findOne({ _id: req.params.sequence }).exec();
-    const story = await Story.findOne({ _id: sequence.story }).exec();
+async function getAllStoryOptions (req) {
+    const storyId = req.params.story;
+    await checkStory(req, storyId);
+    return await Option.find({ story: storyId });
+}
+
+async function checkStory (req, storyId) {
+    const story = await Story.findOne({ _id: storyId }).exec();
     if (story.author !== req.user._id.toString()) {
         throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
     }
+}
+
+async function checkSequence(req) {
+    const sequence = await Sequence.findOne({ _id: req.params.sequence }).exec();
+    await checkStory(req, sequence.story);
 }
 
 function getNextSeq (item) {
@@ -85,4 +95,5 @@ module.exports = {
     createMany: optionCtrl.createMany(),
     update: optionCtrl.update(),
     remove: optionCtrl.remove(),
+    getAllStoryOptions: optionCtrl.createCustomHandler(getAllStoryOptions),
 };

@@ -9,23 +9,41 @@ const handleNewSequence = socket => async (data) => {
     sequence.order = lastSeqInOrder ? lastSeqInOrder.order + 1 : 0;
     try {
         await sequence.save();
+        socket.emit(
+            SocketEvents.NewSequenceResponse,
+            sequence,
+        );
+    } catch (e) {
+        socket.emit(
+            SocketEvents.NewSequenceError,
+            e,
+        );
+    }
+};
+
+const handleUpdateSequence = socket => async (data) => {
+    const { _id: seqId, ...toUpdate } = data;
+   try {
+       const sequence = await Sequence.findOneAndUpdate(
+           { _id: seqId },
+           { $set: toUpdate },
+           { new: true, runValidators: true },
+       );
+       socket.emit(
+           SocketEvents.NewSequenceResponse,
+           sequence,
+       );
     } catch (e) {
         socket.emit(
             SocketEvents.NewSequenceResponse,
             e,
         );
     }
-    socket.emit(
-        SocketEvents.NewSequenceResponse,
-        sequence,
-    );
 };
 
 function registerWriteStorySocket (socket) {
     socket.on(SocketEvents.NewSequenceRequest, handleNewSequence(socket));
-    socket.on(SocketEvents.UpdateSequenceRequest, () => {
-        console.log('Update Sequence')
-    });
+    socket.on(SocketEvents.UpdateSequenceRequest, handleUpdateSequence(socket));
     socket.on(SocketEvents.DeleteSequenceRequest, () => {
         console.log('Delete Sequence')
     });

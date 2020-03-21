@@ -16,6 +16,8 @@ const schema = new mongoose.Schema(
         scenePic: { type: String, default: null },
         hasScenePic: { type: Boolean },
         order: { type: Number, default: 0 },
+        x: { type: Number, default: 0 },
+        y: { type: Number, default: 0 },
 
         story: { type: String, ref: STORY },
         chapter: { type: String, ref: CHAPTER, default: '' },

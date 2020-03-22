@@ -3,6 +3,9 @@ const Story = require('../../models/story').model;
 const Sequence = require('../../models/sequence').model;
 const Option = require('../../models/option').model;
 const constants = require('../common/constants');
+const Filter = require('../common/filters.controller');
+
+const filterManager = new Filter(Option);
 
 const findByCb = function (req) {
     return { _id: req.params.id };
@@ -69,7 +72,9 @@ optionCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_CREATE_MANY].push(async (
 async function getAllStoryOptions (req) {
     const storyId = req.params.story;
     await checkStory(req, storyId);
-    return await Option.find({ story: storyId });
+    let query = Option.find({ story: storyId });
+    query = filterManager.applySorting(req, query);
+    return await query.exec();
 }
 
 async function checkStory (req, storyId) {

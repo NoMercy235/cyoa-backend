@@ -24,6 +24,10 @@ const schema = new mongoose.Schema(
     }
 );
 
+schema.statics.getAllowedSort = function () {
+    return ['created_at'];
+};
+
 module.exports = {
     model: mongoose.model(MODEL, schema),
     key: MODEL,

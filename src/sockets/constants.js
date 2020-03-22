@@ -25,6 +25,8 @@ const SocketEvents = {
     NewOptionError: 'NEW_OPTION_ERROR',
     UpdateOptionError: 'UPDATE_OPTION_ERROR',
     DeleteOptionError: 'DELETE_OPTION_ERROR',
+
+    SaveOptionsRequest: 'SAVE_OPTIONS_REQUEST',
 };
 
 module.exports = {

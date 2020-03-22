@@ -2,7 +2,6 @@ const Sequence = require('../models/sequence').model;
 const { SocketEvents } = require('./constants');
 
 const handleNewSequence = socket => async (data) => {
-    console.log(data);
     const sequence = new Sequence(data);
     sequence.hasScenePic = !!sequence.scenePic;
     const lastSeqInOrder = await Sequence.findLastInOrder();
@@ -23,19 +22,19 @@ const handleNewSequence = socket => async (data) => {
 
 const handleUpdateSequence = socket => async (data) => {
     const { _id: seqId, ...toUpdate } = data;
-   try {
-       const sequence = await Sequence.findOneAndUpdate(
-           { _id: seqId },
-           { $set: toUpdate },
-           { new: true, runValidators: true },
-       );
-       socket.emit(
-           SocketEvents.NewSequenceResponse,
-           sequence,
-       );
+    try {
+        const sequence = await Sequence.findOneAndUpdate(
+            { _id: seqId },
+            { $set: toUpdate },
+            { new: true, runValidators: true },
+        );
+        socket.emit(
+            SocketEvents.UpdateSequenceResponse,
+            sequence,
+        );
     } catch (e) {
         socket.emit(
-            SocketEvents.NewSequenceResponse,
+            SocketEvents.UpdateSequenceError,
             e,
         );
     }

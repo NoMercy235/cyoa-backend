@@ -14,6 +14,7 @@ const handleNewSequence = socket => async (data) => {
             sequence,
         );
     } catch (e) {
+        console.log(e);
         socket.emit(
             SocketEvents.NewSequenceError,
             e,
@@ -34,8 +35,30 @@ const handleUpdateSequence = socket => async (data) => {
             sequence,
         );
     } catch (e) {
+        console.log(e);
         socket.emit(
             SocketEvents.UpdateSequenceError,
+            e,
+        );
+    }
+};
+
+const handleRemoveSequence = socket => async (seqId) => {
+    try {
+        const sequence = await Sequence.findOneAndRemove(
+            { _id: seqId },
+        );
+        await Option.deleteMany(
+            { nextSeq: seqId },
+        );
+        socket.emit(
+            SocketEvents.DeleteSequenceResponse,
+            sequence,
+        );
+    } catch (e) {
+        console.log(e);
+        socket.emit(
+            SocketEvents.DeleteSequenceError,
             e,
         );
     }
@@ -83,9 +106,7 @@ const handleSaveOptions = socket => async (options) => {
 function registerWriteStorySocket (socket) {
     socket.on(SocketEvents.NewSequenceRequest, handleNewSequence(socket));
     socket.on(SocketEvents.UpdateSequenceRequest, handleUpdateSequence(socket));
-    socket.on(SocketEvents.DeleteSequenceRequest, () => {
-        console.log('Delete Sequence')
-    });
+    socket.on(SocketEvents.DeleteSequenceRequest, handleRemoveSequence(socket));
 
     socket.on(SocketEvents.SaveOptionsRequest, handleSaveOptions(socket));
 }

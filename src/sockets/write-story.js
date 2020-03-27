@@ -103,12 +103,32 @@ const handleSaveOptions = socket => async (options) => {
     }
 };
 
+const handleDeleteOptions = socket => async (optionIds) => {
+    try {
+        await Option.deleteMany(
+            { _id: { $in: optionIds } },
+        );
+
+        socket.emit(
+            SocketEvents.DeleteOptionsResponse,
+            optionIds,
+        );
+    } catch (e) {
+        console.log(e);
+        socket.emit(
+            SocketEvents.DeleteOptionsError,
+            e,
+        );
+    }
+};
+
 function registerWriteStorySocket (socket) {
     socket.on(SocketEvents.NewSequenceRequest, handleNewSequence(socket));
     socket.on(SocketEvents.UpdateSequenceRequest, handleUpdateSequence(socket));
     socket.on(SocketEvents.DeleteSequenceRequest, handleRemoveSequence(socket));
 
     socket.on(SocketEvents.SaveOptionsRequest, handleSaveOptions(socket));
+    socket.on(SocketEvents.DeleteOptionsRequest, handleDeleteOptions(socket));
 }
 
 module.exports = registerWriteStorySocket;

@@ -20,6 +20,10 @@ const SocketEvents = {
     SaveOptionsRequest: 'SAVE_OPTIONS_REQUEST',
     SaveOptionsResponse: 'SAVE_OPTIONS_RESPONSE',
     SaveOptionsError: 'SAVE_OPTIONS_ERROR',
+
+    DeleteOptionsRequest: 'DELETE_OPTIONS_REQUEST',
+    DeleteOptionsResponse: 'DELETE_OPTIONS_RESPONSE',
+    DeleteOptionsError: 'DELETE_OPTIONS_ERROR',
 };
 
 module.exports = {

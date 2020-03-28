@@ -49,7 +49,12 @@ const handleRemoveSequence = socket => async (seqId) => {
             { _id: seqId },
         );
         await Option.deleteMany(
-            { nextSeq: seqId },
+            {
+                $or: [
+                    { nextSeq: seqId },
+                    { sequence: seqId },
+                ]
+            },
         );
         socket.emit(
             SocketEvents.DeleteSequenceResponse,

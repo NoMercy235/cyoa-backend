@@ -1,17 +1,28 @@
+const Story = require('../models/story').model;
 const Sequence = require('../models/sequence').model;
 const Option = require('../models/option').model;
 const { SocketEvents } = require('./constants');
 
-const handleNewSequence = socket => async (data) => {
-    const sequence = new Sequence(data);
-    sequence.hasScenePic = !!sequence.scenePic;
+const updateStoryStartSeq = async (storyId, startSeq) => {
+    return await Story.findOneAndUpdate(
+        { _id: storyId },
+        { $set: { startSeq } },
+        { new: true, runValidators: true },
+    );
+};
+const handleNewSequence = socket => async ({ sequence, isStartSeq }) => {
+    const dbSequence = new Sequence(sequence);
+    dbSequence.hasScenePic = !!dbSequence.scenePic;
     const lastSeqInOrder = await Sequence.findLastInOrder();
-    sequence.order = lastSeqInOrder ? lastSeqInOrder.order + 1 : 0;
+    dbSequence.order = lastSeqInOrder ? lastSeqInOrder.order + 1 : 0;
     try {
-        await sequence.save();
+        await dbSequence.save();
         socket.emit(
             SocketEvents.NewSequenceResponse,
-            sequence,
+            {
+                sequence: dbSequence,
+                ...(isStartSeq && { story: await updateStoryStartSeq(dbSequence.story, dbSequence._id) }),
+            },
         );
     } catch (e) {
         console.log(e);
@@ -22,17 +33,20 @@ const handleNewSequence = socket => async (data) => {
     }
 };
 
-const handleUpdateSequence = socket => async (data) => {
-    const { _id: seqId, ...toUpdate } = data;
+const handleUpdateSequence = socket => async ({ sequence, isStartSeq }) => {
+    const { _id: seqId, ...toUpdate } = sequence;
     try {
-        const sequence = await Sequence.findOneAndUpdate(
+        const dbSequence = await Sequence.findOneAndUpdate(
             { _id: seqId },
             { $set: toUpdate },
             { new: true, runValidators: true },
         );
         socket.emit(
             SocketEvents.UpdateSequenceResponse,
-            sequence,
+            {
+                sequence: dbSequence,
+                ...(isStartSeq && { story: await updateStoryStartSeq(dbSequence.story, dbSequence._id) }),
+            },
         );
     } catch (e) {
         console.log(e);
@@ -43,22 +57,26 @@ const handleUpdateSequence = socket => async (data) => {
     }
 };
 
-const handleRemoveSequence = socket => async (seqId) => {
+const handleRemoveSequence = socket => async ({ storyId, sequenceId }) => {
     try {
-        const sequence = await Sequence.findOneAndRemove(
-            { _id: seqId },
+        const dbSequence = await Sequence.findOneAndRemove(
+            { _id: sequenceId },
         );
         await Option.deleteMany(
             {
                 $or: [
-                    { nextSeq: seqId },
-                    { sequence: seqId },
+                    { nextSeq: sequenceId },
+                    { sequence: sequenceId },
                 ]
             },
         );
+        const story = await Story.findOne({ _id: storyId });
         socket.emit(
             SocketEvents.DeleteSequenceResponse,
-            sequence,
+            {
+                sequence: dbSequence,
+                ...((story.startSeq === sequenceId) && { story: await updateStoryStartSeq(storyId, '') }),
+            },
         );
     } catch (e) {
         console.log(e);

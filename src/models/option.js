@@ -17,6 +17,15 @@ const schema = new mongoose.Schema(
                 changeValue: Number,
                 _id: false,
             }],
+            default: [],
+        },
+        requirements: {
+            type: [{
+                attribute: String,
+                value: Number,
+                _id: false,
+            }],
+            default: [],
         },
     },
     {

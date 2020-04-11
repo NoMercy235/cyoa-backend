@@ -33,11 +33,12 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (re
     const newName = req.body.name;
 
     await updateOptions(req, (attr, o) => {
-        o.consequences.forEach(con => {
-            if (con.attribute === attr.name) {
-                con.attribute = newName;
-            }
-        });
+        o.consequences
+            .filter(({ attribute }) => attribute === attr.name)
+            .forEach(requirement => requirement.attribute = newName);
+        o.requirements
+            .filter(({ attribute }) => attribute === attr.name)
+            .forEach(requirement => requirement.attribute = newName);
         return o.save();
     });
 });
@@ -45,9 +46,8 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (re
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req) => {
     await checkAuthor(req);
     await updateOptions(req, (attr, o) => {
-        o.consequences = o.consequences.filter(con => {
-            return con.attribute !== attr.name;
-        });
+        o.consequences = o.consequences.filter(({ attribute }) => attribute === attr.name);
+        o.requirements = o.requirements.filter(({ attribute }) => attribute === attr.name);
         return o.save();
     });
 });

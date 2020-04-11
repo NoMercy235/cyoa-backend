@@ -20,7 +20,9 @@ const { SocketEvents } = require('./sockets/constants');
 
 const port = process.env.PORT || 8080;
 const httpsPort = process.env.HTTPS_PORT || 443;
-const allowedOrigins = 'localhost:* *.rigamo.xyz';
+// TODO: check this sometime
+// const allowedOrigins = ['localhost:*', 'https://rigamo.xyz', 'https://api.rigamo.xyz', 'https://*.rigamo.xyz'];
+const allowedOrigins = 'localhost:* rigamo.xyz:443';
 
 // Overriding the deprecated "Promise" module of mongoose.
 // For more information see: https://github.com/Automattic/mongoose/issues/4291
@@ -30,6 +32,7 @@ mongoose.connect(config.database, { useMongoClient: true, keepAlive: true });
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '200kb' }));
+
 
 app.use(cors());
 app.use(morgan('dev'));
@@ -48,7 +51,7 @@ httpServer.listen(port, () => {
     console.log(`HTTP Server started on port: ${port}`);
 });
 
-ioServer = io( httpServer, { origins: allowedOrigins });
+ioServer = io(httpServer, { origins: allowedOrigins });
 ioServer.on(SocketEvents.Connection, handleSocket);
 
 // HTTPS server config

@@ -92,10 +92,14 @@ const handleSaveOptions = socket => async (options) => {
         const optionsToCreate = options.filter(o => !o._id);
         const optionsToUpdate = options.filter(o => !!o._id);
 
-        const createOperations = optionsToCreate.map(o => {
+        const createOperations = optionsToCreate.map(async o => {
             const { _id, ...metadata } = o;
             const dbOption = new Option(metadata);
-            return dbOption.save();
+            await dbOption.save();
+            const seq = await Sequence.findOne({ _id: o.sequence });
+            seq.options.push(dbOption._id);
+            await seq.save();
+            return dbOption;
         });
 
         const updateOperations = optionsToUpdate.map(o => {

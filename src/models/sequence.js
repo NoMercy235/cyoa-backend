@@ -21,7 +21,7 @@ const schema = new mongoose.Schema(
 
         story: { type: String, ref: STORY },
         chapter: { type: String, ref: CHAPTER, default: '' },
-        options: [{ type: String, ref: OPTION }],
+        options: [{ type: String, ref: OPTION, default: [] }],
     },
     {
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

@@ -92,6 +92,7 @@ async function checkIfStoryCanPublish (story) {
 async function getSequenceById (id) {
     return await Sequence
         .findOne({ _id: id })
+        .select('-scenePic')
         .populate(['options']);
 }
 

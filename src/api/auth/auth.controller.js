@@ -59,6 +59,14 @@ const authenticate = async (req, res) => {
 const register = async (req, res) => {
     const { email, firstName, lastName } = req.body;
 
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        res.status(constants.HTTP_CODES.CONFLICT).json({
+            message: 'Email is already registered'
+        });
+        return ;
+    }
+
     const user = User(req.body);
     try {
         await user.save();

@@ -41,7 +41,7 @@ schema.statics.getAllowedSort = function () {
     return ['name', 'order'];
 };
 
-schema.statics.ignoreFieldsInList = ['scenePic'];
+schema.statics.ignoreFieldsInList = [];
 
 schema.statics.findLastInOrder = function () {
     return this.findOne({}).sort('-order');

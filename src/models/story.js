@@ -1,5 +1,4 @@
 const { handleUniqueError } = require('./utils');
-const { ERROR_MESSAGES } = require('../api/common/constants');
 const MODEL_NAMES = require('./model-names');
 
 const USER = MODEL_NAMES.user;
@@ -38,7 +37,7 @@ const schema = new mongoose.Schema(
 
 schema.index({ name: 1, author: 1 }, { unique: true });
 
-schema.post('save', handleUniqueError({ message: ERROR_MESSAGES.nameNotUnique }));
+schema.post('save', handleUniqueError(['name']));
 
 schema.statics.getDefaultSort = () => {
     return { field: 'created_at', order: 'desc' };

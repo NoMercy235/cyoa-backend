@@ -1,5 +1,4 @@
 const { handleUniqueError } = require('./utils');
-const { ERROR_MESSAGES } = require('../api/common/constants');
 const MODEL_NAMES = require('./model-names');
 
 const USER = MODEL_NAMES.user;
@@ -22,7 +21,7 @@ const schema = new mongoose.Schema(
 
 schema.index({ story: 1, user: 1 }, { unique: true });
 
-schema.post('save', handleUniqueError({ message: ERROR_MESSAGES.nameNotUnique }));
+schema.post('save', handleUniqueError({ story: true }));
 
 schema.statics.ignoreFieldsInList = [];
 

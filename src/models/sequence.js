@@ -1,5 +1,4 @@
 const { handleUniqueError } = require('./utils');
-const { ERROR_MESSAGES } = require('../api/common/constants');
 const MODEL_NAMES = require('./model-names');
 
 const STORY = MODEL_NAMES.story;
@@ -31,7 +30,7 @@ const schema = new mongoose.Schema(
 
 schema.index({ name: 1, story: 1 }, { unique: true });
 
-schema.post('save', handleUniqueError({ message: ERROR_MESSAGES.nameNotUnique }));
+schema.post('save', handleUniqueError(['name']));
 
 schema.statics.getAllowedFilters = function () {
     return ['name', 'story', 'chapter', 'isEnding'];

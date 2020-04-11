@@ -29,7 +29,7 @@ mongoose.Promise = global.Promise;
 mongoose.connect(config.database, { useMongoClient: true, keepAlive: true });
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({ limit: '2mb' }));
+app.use(bodyParser.json({ limit: '200kb' }));
 
 app.use(cors());
 app.use(morgan('dev'));

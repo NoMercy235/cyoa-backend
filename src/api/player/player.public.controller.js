@@ -72,22 +72,26 @@ async function setPlayerForStory (req) {
 }
 
 async function getOrCreate (req) {
-    const player = req.query.playerId;
+    const { playerId: player, forceReset } = req.query;
     const query = { player, story: req.params.story };
 
     let playerObj = await Player.findOne(query).exec();
 
-    if (!playerObj) {
+    if (!playerObj || forceReset) {
         const story = await Story.findOne({ _id: req.params.story });
         const attributes = await Attribute.find({ story: req.params.story });
 
-        playerObj = new Player({
-            player,
-            story: story._id,
-            lastStorySequence: story.startSeq,
-            attributes: attributes.map(Attribute.forPlayer),
-        });
-
+        if (!playerObj) {
+            playerObj = new Player({
+                player,
+                story: story._id,
+                lastStorySequence: story.startSeq,
+                attributes: attributes.map(Attribute.forPlayer),
+            });
+        } else {
+            playerObj.lastStorySequence = story.startSeq;
+            playerObj.attributes = attributes.map(Attribute.forPlayer);
+        }
         story.readTimes ++;
 
         await Promise.all([

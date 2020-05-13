@@ -21,8 +21,19 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) =>
     return query;
 });
 
-storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, query) => {
+storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push(async (req, query) => {
+    await checkAuthor(req);
     query.populate({ path: 'author', select: [ 'email', 'firstName', 'lastName' ] });
+    if (req.query.isPreview === 'true') {
+        query.populate({
+            path: 'startSeq',
+            select: [ 'name', 'content', 'isEnding' ],
+            populate: {
+                path: 'options',
+                select: [ 'action', 'consequences', 'nextSeq' ],
+            },
+        });
+    }
 });
 
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, item) => {

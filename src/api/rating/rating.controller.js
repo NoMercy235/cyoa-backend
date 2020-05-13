@@ -9,10 +9,10 @@ const findByCb = function ({ params: { userId, storyId } }) {
 const ratingCtrl = new BaseController(Rating, findByCb);
 
 ratingCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {
-    await checkAuthor(req);
+    await checkOwner(req);
 });
 
-async function checkAuthor(req) {
+async function checkOwner(req) {
     const rating = await Rating.findOne({ _id: req.params.id }).exec();
     if (rating.user !== req.user._id.toString()) {
         throw { message: constants.ERROR_MESSAGES.resourceNotOwned };

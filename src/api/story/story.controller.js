@@ -22,7 +22,6 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) =>
 });
 
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push(async (req, query) => {
-    await checkAuthor(req);
     query.populate({ path: 'author', select: [ 'email', 'firstName', 'lastName' ] });
     if (req.query.isPreview === 'true') {
         query.populate({
@@ -37,20 +36,10 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push(async (req,
 });
 
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, item) => {
-    await checkAuthor(req);
     delete item.published;
 });
 
-async function checkAuthor(req) {
-    const story = await Story.findOne({ _id: req.params.id }).exec();
-    if (story.author !== req.user._id.toString()) {
-        throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
-    }
-}
-
 async function publishStory (req) {
-    await checkAuthor(req);
-
     const storyId = req.params.id;
     const published = req.body.published;
     const story = await Story.findOne({ _id: storyId });

@@ -1,11 +1,19 @@
 const router = require('express').Router();
 const controller = require('./sequence.controller');
+const { isOwner } = require('../common/base.middleware');
+const Story = require('../../models/story').model;
 
-router.put('/:story/updateOrder', controller.updateOrder);
-router.get('/:story', controller.get);
-router.post('/:story', controller.create);
-router.get('/:story/:id', controller.getOne);
-router.put('/:story/:id', controller.update);
-router.delete('/:story/:id', controller.remove);
+const isStoryOwner = isOwner(
+    Story,
+    (req) => ({ _id: req.params.story }),
+    'author',
+);
+
+router.put('/:story/updateOrder', isStoryOwner, controller.updateOrder);
+router.get('/:story', isStoryOwner, controller.get);
+router.post('/:story', isStoryOwner, controller.create);
+router.get('/:story/:id', isStoryOwner, controller.getOne);
+router.put('/:story/:id', isStoryOwner, controller.update);
+router.delete('/:story/:id', isStoryOwner, controller.remove);
 
 module.exports = router;

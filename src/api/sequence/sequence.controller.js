@@ -1,6 +1,5 @@
 const BaseController = require('../common/base.controller');
 const Sequence = require('../../models/sequence').model;
-const Story = require('../../models/story').model;
 const constants = require('../common/constants');
 
 const findByCb = function (req) {
@@ -20,15 +19,10 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET_ONE].push((req, qu
 });
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push(async (req, item) => {
-    await checkAuthor(req);
     item.story = req.params.story;
     item.hasScenePic = !!item.scenePic;
     const lastSeqInOrder = await Sequence.findLastInOrder();
     item.order = lastSeqInOrder ? lastSeqInOrder.order + 1 : 0;
-});
-
-sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {
-    await checkAuthor(req);
 });
 
 sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].push(async (req, item) => {
@@ -38,19 +32,7 @@ sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].push(async (req
     delete item.scenePic;
 });
 
-sequenceCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req) => {
-    await checkAuthor(req);
-});
-
-async function checkAuthor(req) {
-    const story = await Story.findOne({ _id: req.params.story }).exec();
-    if (story.author !== req.user._id.toString()) {
-        throw { message: constants.ERROR_MESSAGES.resourceNotOwned }
-    }
-}
-
 const updateOrder = async (req) => {
-    await checkAuthor(req);
     const { seqId, ahead } = req.body;
     const seqOrder = ahead ? 1 : -1;
 

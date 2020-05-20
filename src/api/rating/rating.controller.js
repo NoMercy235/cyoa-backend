@@ -1,23 +1,11 @@
 const BaseController = require('../common/base.controller');
 const Rating = require('../../models/rating').model;
-const constants = require('../common/constants');
 
 const findByCb = function ({ params: { userId, storyId } }) {
     return { user: userId, story: storyId };
 };
 
 const ratingCtrl = new BaseController(Rating, findByCb);
-
-ratingCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req) => {
-    await checkOwner(req);
-});
-
-async function checkOwner(req) {
-    const rating = await Rating.findOne({ _id: req.params.id }).exec();
-    if (rating.user !== req.user._id.toString()) {
-        throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
-    }
-}
 
 async function setRating (req) {
     const { userId, storyId } = req.params;
@@ -40,10 +28,15 @@ async function setRating (req) {
     return ratingObj;
 }
 
+async function removeRating (req) {
+    const { id } = req.params;
+    return await Rating.findOneAndRemove({ _id: id });
+}
+
 module.exports = {
     get: ratingCtrl.get(),
     getOne: ratingCtrl.getOne(),
     create: ratingCtrl.create(),
     update: ratingCtrl.createCustomHandler(setRating),
-    remove: ratingCtrl.remove(),
+    remove: ratingCtrl.createCustomHandler(removeRating),
 };

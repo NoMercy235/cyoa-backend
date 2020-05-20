@@ -11,6 +11,11 @@ const findByCb = function (req) {
 
 const userController = new BaseController(User, findByCb);
 
+userController.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push(async (req, query) => {
+    query = query.select('-password');
+    return query;
+});
+
 userController.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, body, query) => {
     await checkPermission(req);
     delete body.isActive;

@@ -9,7 +9,7 @@ const findByCb = (req) => ({ _id: req.params.story });
 const isStoryOwner = isOwner(
     Story,
     findByCb,
-    'story',
+    'author',
 );
 
 router.put(

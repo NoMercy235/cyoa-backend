@@ -1,29 +1,21 @@
 const router = require('express').Router();
 const controller = require('./option.controller');
 const { isOwner } = require('../common/base.middleware');
+const { isSequenceOwner, isStoryPublishedForSequence } = require('./option.middleware');
 const Story = require('../../models/story').model;
-const Sequence = require('../../models/sequence').model;
-const { isStoryPublished } = require('../story/story.middleware');
-
-const findByCb = (req) => ({ _id: req.params.story });
 
 const isStoryOwner = isOwner(
     Story,
-    findByCb,
-    'story',
+    (req) => ({ _id: req.params.story }),
+    'author',
 );
 
-const isSequenceOwner = isOwner(
-    Sequence,
-    (req) => ({ _id: req.params.sequence }),
-    'story',
-);
-
+const findByCb = (req) => ({ _id: req.params.sequence });
 
 router.post(
     '/many/:sequence',
-    isSequenceOwner,
-    isStoryPublished(findByCb),
+    isSequenceOwner(findByCb),
+    isStoryPublishedForSequence(findByCb),
     controller.createMany,
 );
 router.get(
@@ -33,30 +25,30 @@ router.get(
 );
 router.get(
     '/:sequence',
-    isSequenceOwner,
+    isSequenceOwner(findByCb),
     controller.get,
 );
 router.post(
     '/:sequence',
-    isSequenceOwner,
-    isStoryPublished(findByCb),
+    isSequenceOwner(findByCb),
+    isStoryPublishedForSequence(findByCb),
     controller.create,
 );
 router.get(
     '/:sequence/:id',
-    isSequenceOwner,
+    isSequenceOwner(findByCb),
     controller.getOne,
 );
 router.put(
     '/:sequence/:id',
-    isSequenceOwner,
-    isStoryPublished(findByCb),
+    isSequenceOwner(findByCb),
+    isStoryPublishedForSequence(findByCb),
     controller.update,
 );
 router.delete(
     '/:sequence/:id',
-    isSequenceOwner,
-    isStoryPublished(findByCb),
+    isSequenceOwner(findByCb),
+    isStoryPublishedForSequence(findByCb),
     controller.remove,
 );
 

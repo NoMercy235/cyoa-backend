@@ -11,7 +11,11 @@ const isOwner = (Resource, findByCb, propToCheck) => {
             return;
         }
 
-        if (resource[propToCheck] !== req.user._id.toString()) {
+        const value = propToCheck instanceof Function
+            ? propToCheck(resource)
+            : resource[propToCheck];
+
+        if (value !== req.user._id.toString()) {
             const err = {
                 status: constants.HTTP_CODES.FORBIDDEN,
                 message: constants.ERROR_MESSAGES.resourceNotOwned,

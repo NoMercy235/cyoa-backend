@@ -6,7 +6,7 @@ const User = require('../../models/user').model;
 const isUserOwner = isOwner(
     User,
     (req) => ({ _id: req.user._id.toString() }),
-    '_id',
+    (res) => res._id.toString(),
 )
 
 router.get('/', controller.get);

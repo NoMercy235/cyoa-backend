@@ -17,7 +17,6 @@ userController.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push(async (req
 });
 
 userController.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, body, query) => {
-    await checkPermission(req);
     delete body.isActive;
     delete body.isAdmin;
     delete body.isEmailVerified;
@@ -37,13 +36,6 @@ userController.callbacks[constants.HTTP_TIMED_EVENTS.AFTER_UPDATE].push(async (r
 
 function getUserWithToken (req, res) {
     res.json(req.user);
-}
-
-async function checkPermission (req) {
-    const user = await User.findOne({ email: req.params.email }).exec();
-    if (user._id.toString() !== req.user._id.toString()) {
-        throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
-    }
 }
 
 async function uploadProfilePicture (req) {

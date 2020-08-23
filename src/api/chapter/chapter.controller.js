@@ -28,20 +28,6 @@ chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query)
     return query;
 });
 
-chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_UPDATE].push(async (req, item) => {
-    await checkAuthor(req, item);
-});
-
-chaptersCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_REMOVE].push(async (req, item) => {
-    await checkAuthor(req, item);
-});
-
-async function checkAuthor(req, item) {
-    if (item.author === req.user._id) {
-        throw { message: constants.ERROR_MESSAGES.resourceNotOwned };
-    }
-}
-
 module.exports = {
     get: chaptersCtrl.get(),
     getOne: chaptersCtrl.getOne(),

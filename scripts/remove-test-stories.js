@@ -13,7 +13,14 @@ const config = require('../src/config');
 // Overriding the deprecated "Promise" module of mongoose.
 // For more information see: https://github.com/Automattic/mongoose/issues/4291
 mongoose.Promise = global.Promise;
-mongoose.connect(config.database, { useMongoClient: true, keepAlive: false });
+mongoose.connect(
+    config.database,
+    {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+        keepAlive: false,
+    },
+);
 
 
 (async function generateStory(){

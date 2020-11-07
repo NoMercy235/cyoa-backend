@@ -28,7 +28,14 @@ const allowedOrigins = 'localhost:* rigamo.xyz:443';
 // For more information see: https://github.com/Automattic/mongoose/issues/4291
 mongoose.Promise = global.Promise;
 // Providing the 'useMongoClient' property to get rid of the deprecated message.
-mongoose.connect(config.database, { useMongoClient: true, keepAlive: true });
+mongoose.connect(
+    config.database,
+    {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+        keepAlive: false,
+    },
+);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '400kb' }));

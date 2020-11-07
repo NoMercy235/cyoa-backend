@@ -61,15 +61,16 @@ schema.statics.updateFields = function (fields) {
 };
 
 schema.path('email').validate({
-    isAsync: true,
-    validator: function (value, done) {
-        if (this._id) done();
-        this.model(MODEL).count({ email: value }, (err, count) => {
-            if (err) {
-                return done(err);
-            }
-            done(!count);
-        })
+    validator: function (value) {
+        return new Promise(resolve => {
+           if (this._id) resolve();
+            this.model(MODEL).count({ email: value }, (err, count) => {
+                if (err) {
+                    return resolve(err);
+                }
+                resolve(!count);
+            });
+        });
     },
     message: 'Email already exists',
 });

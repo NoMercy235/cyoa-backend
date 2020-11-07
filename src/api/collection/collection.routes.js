@@ -1,11 +1,11 @@
 const router = require('express').Router();
 const controller = require('./collection.controller');
 const { isOwner } = require('../common/base.middleware');
-const User = require('../../models/user').model;
+const Collection = require('../../models/collection').model;
 
 const isCollectionOwner = isOwner(
-    User,
-    (req) => ({ _id: req.user._id.toString() }),
+    Collection,
+    (req) => ({ author: req.user._id.toString() }),
     'author',
 )
 

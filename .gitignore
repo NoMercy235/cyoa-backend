@@ -5,7 +5,9 @@
 .DS_Store
 .idea/
 src/config.js
+.env
 database
 *.ignoreme*
 /certs*
 /uploads
+/scripts/backup

@@ -1,6 +1,21 @@
 version: '2'
 
 services:
+    cyoa-backend-db:
+        image: "mongo:4.2"
+        restart: always
+        container_name: cyoa-backend-db
+        env_file: .env
+        environment:
+            - MONGO_INITDB_DATABASE=cyoa-prod
+            - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+            - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+        ports:
+            - "27017:27017"
+        volumes:
+            - "./database:/data/db"
+        networks:
+            - cyoa-network
     cyoa-backend:
         container_name: cyoa-backend
         build:
@@ -11,6 +26,8 @@ services:
             - "4209:443"
         volumes:
             - "./uploads:/src/uploads"
+        networks:
+            - cyoa-network
 
 networks:
     cyoa-network:

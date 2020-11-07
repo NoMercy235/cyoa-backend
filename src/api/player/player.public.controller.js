@@ -77,7 +77,7 @@ async function getOrCreate (req) {
 
     let playerObj = await Player.findOne(query).exec();
 
-    if (!playerObj || forceReset) {
+    if (!playerObj || forceReset === 'true') {
         const story = await Story.findOne({ _id: req.params.story });
         const attributes = await Attribute.find({ story: req.params.story });
 

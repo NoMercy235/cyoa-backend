@@ -1,6 +1,7 @@
 console.warn('Do not use this for production database!');
 
 const mongoose = require('mongoose');
+const faker = require('faker');
 
 const User = require('../src/models/user').model;
 const Tag = require('../src/models/tag').model;
@@ -28,7 +29,7 @@ const adminEmail = 'admin@tta.com';
 
 async function createCollection (currentUser) {
     const collection = new Collection({
-        name: `Test collection - ${randomString()}`,
+        name: `Test collection - ${faker.lorem.words()}`,
         description: 'test description',
         author: currentUser._id,
     });
@@ -40,9 +41,9 @@ async function createStory (currentUser, collection) {
     const tags = await Tag.find({}).exec();
 
     const story = new Story({
-        name: `Test story - ${randomString()}`,
-        shortDescription: randomText(10),
-        longDescription: randomText(100),
+        name: `Test story - ${faker.lorem.words()}`,
+        shortDescription: faker.lorem.paragraph(),
+        longDescription: faker.lorem.paragraphs(),
         authorShort: `${currentUser.firstName} ${currentUser.lastName}`,
         published: true,
         // coverPic: '',
@@ -64,9 +65,9 @@ async function createAttributes (story) {
             .fill(0)
             .map(async () => {
                 const attribute = new Attribute({
-                    name: randomWord(),
-                    isImportant: randomBoolean(),
-                    startValue: randomNumber(),
+                    name: faker.lorem.word(),
+                    isImportant: faker.random.boolean(),
+                    startValue: faker.random.number(100),
                     story: story._id,
                 });
                 return attribute.save();
@@ -75,30 +76,32 @@ async function createAttributes (story) {
 }
 
 async function createChapters (currentUser, story) {
-    return await Promise.all(
+    const promises = Promise.all(
         new Array(randomDigit() + 1)
             .fill(0)
             .map(async () => {
                 const chapter = new Chapter({
-                    name: randomWord(20, 5),
+                    name: faker.lorem.word(),
                     author: currentUser._id,
                     story: story._id,
                 });
                 story.chapters.push(chapter._id);
-                await story.save();
                 return chapter.save();
             })
     );
+    await story.save();
+    const chapters = await promises;
+    return chapters;
 }
 
 async function createSequences (currentUser, story, chapter) {
-    return await Promise.all(
+    const promises = Promise.all(
         new Array(randomDigit() + 1)
             .fill(0)
             .map(async (i) => {
                 const sequence = new Sequence({
-                    name: randomText(3),
-                    content: randomText(),
+                    name: faker.lorem.words(),
+                    content: faker.lorem.paragraphs(),
                     // isEnding: lowerRandomBoolean(10),
                     author: currentUser._id,
                     order: i,
@@ -106,10 +109,13 @@ async function createSequences (currentUser, story, chapter) {
                     chapter: chapter._id,
                 });
                 chapter.sequences.push(sequence._id);
-                await chapter.save();
                 return sequence.save();
             })
     );
+
+    await chapter.save();
+    const sequences = await promises;
+    return sequences;
 }
 
 async function createStartSeq (story, sequences) {
@@ -132,7 +138,7 @@ async function createOptions (story, seqArr, attributes) {
                     .fill(0)
                     .map(async () => {
                         const option = new Option({
-                            action: randomText(5),
+                            action: faker.lorem.words(),
                             story: story._id,
                             sequence: sequence._id,
                             nextSeq: randomElFromArr(seqRow)._id,
@@ -228,42 +234,12 @@ function seedFailed (reason) {
     process.exit(1);
 }
 
-function randomString(length = 5) {
-    let text = "";
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (let i = 0; i < length; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-}
-
 function randomDigit() {
     return Math.floor(Math.random() * 10);
 }
 
 function randomNumber(max = 100, min = 0) {
     return Math.floor(Math.random() * max) + min;
-}
-
-function randomWord(max = 10, min = 0) {
-    return randomString(randomNumber(max, min) + 1);
-}
-
-function randomBoolean() {
-    return randomDigit() % 2 === 0;
-}
-
-function lowerRandomBoolean(chance) {
-    return randomNumber(chance) === 0;
-}
-
-function randomText (length) {
-    if (!length) length = randomNumber() + 1;
-    return new Array(length)
-        .fill(0)
-        .map(() => randomWord())
-        .join(' ');
 }
 
 function randomElFromArr (arr) {

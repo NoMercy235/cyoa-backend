@@ -9,6 +9,9 @@ const {
     sendForgotPasswordEmail,
     resetPasswordTokens
 } = require('../../../scripts/email-sender/email-sender');
+const {
+    logError,
+} = require('../../models/utils');
 
 const generateToken = () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
@@ -39,13 +42,27 @@ const signJwtToken = (user) => {
     );
 };
 
+const logUnknownError = (e) => {
+    logError(e.message || 'Unknown Error', JSON.stringify(e));
+};
+
 const authenticate = async (req, res) => {
     const { email } = req.body;
     try {
         const user = await User.findOne({ email });
-        if (!user || !user.comparePassword(req.body.password) || !user.isEmailVerified) {
+        if (!user || !user.comparePassword(req.body.password)) {
             sendUnauthorized(res);
             return ;
+        }
+
+        if (!user.isEmailVerified) {
+            res
+                .status(constants.HTTP_CODES.FORBIDDEN)
+                .json({
+                    [constants.ERROR_CODES.emailNotVerified]: true,
+                    message: 'Email not verified',
+                });
+            return;
         }
 
         const log = Log({
@@ -59,12 +76,26 @@ const authenticate = async (req, res) => {
             token: signJwtToken(user),
         });
     } catch (e) {
+        logUnknownError(e);
         sendUnauthorized(res);
     }
 };
 
+const sendConfirmationEmail = async (req, user) => {
+    const { email, firstName, lastName } = user;
+    const emailVerifyToken = await generateEmailVerifyToken(req, user);
+
+    await sendEmailVerifyEmail({
+        token: emailVerifyToken.token,
+        destination: email,
+        name: firstName || lastName
+            ? `${firstName} ${lastName}`.trim()
+            : email,
+    });
+};
+
 const register = async (req, res) => {
-    const { email, firstName, lastName } = req.body;
+    const { email } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -80,15 +111,7 @@ const register = async (req, res) => {
         res.status(constants.HTTP_CODES.OK).json({
             user: user.safeToSend(true)
         });
-        const emailVerifyToken = await generateEmailVerifyToken(req, user);
-
-        await sendEmailVerifyEmail({
-            token: emailVerifyToken.token,
-            destination: email,
-            name: firstName || lastName
-                ? `${firstName} ${lastName}`.trim()
-                : email,
-        });
+        await sendConfirmationEmail(req, user);
     } catch (err) {
         res.status(constants.HTTP_CODES.BAD_REQUEST).json(err);
     }
@@ -128,6 +151,22 @@ const verifyEmail = async (req, res) => {
         sendUnauthorized(res);
     }
 
+};
+
+const resendEmail = async (req, res) => {
+    const { email } = req.params;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            sendUnauthorized(res);
+            return;
+        }
+        await sendConfirmationEmail(req, user);
+        res.sendStatus(constants.HTTP_CODES.OK);
+    } catch (e) {
+        logUnknownError(e);
+        res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(e);
+    }
 };
 
 const lostPasswordEmail = async (req, res) => {
@@ -180,6 +219,7 @@ module.exports = {
     register,
     checkToken,
     verifyEmail,
+    resendEmail,
     lostPasswordEmail,
     recoverPasswordRequest,
 };

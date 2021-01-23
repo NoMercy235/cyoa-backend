@@ -49,6 +49,7 @@ const ERROR_CODES = {
     noStartSeq: 'noStartSeq',
     noEndSeq: 'noEndSeq',
     noRouteToEndSeq: 'noRouteToEndSeq',
+    emailNotVerified: 'emailNotVerified',
     mongoError: 'MongoError',
     DUPLICATE_VALUE: 11000,
 };

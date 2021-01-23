@@ -7,6 +7,7 @@ const schema = new mongoose.Schema(
     {
         type: { type: String, required: true },
         message: { type: String, required: true },
+        extra: { type: String },
     },
     {
         timestamps: { createdAt: 'created_at' },

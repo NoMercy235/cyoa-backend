@@ -1,4 +1,5 @@
 const { ERROR_CODES, HTTP_CODES } = require('../api/common/constants');
+const { model: Log, LogType } = require('./log');
 
 function handleUniqueError (body) {
     return (err, doc, next) => {
@@ -10,6 +11,19 @@ function handleUniqueError (body) {
     };
 }
 
+function logMessage (type) {
+    return (message, extra) => {
+        const log = Log({
+            type,
+            message,
+            extra,
+        });
+        return log.save();
+    };
+}
+
 module.exports = {
     handleUniqueError,
+    logError: logMessage(LogType.Error),
+    logInfo: logMessage(LogType.Info),
 };

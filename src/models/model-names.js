@@ -10,4 +10,5 @@ module.exports = {
     chapter: 'Chapter',
     rating: 'Rating',
     emailVerifyToken: 'EmailVerifyToken',
+    log: 'Log',
 };

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../../models/user').model;
+const { model: Log, LogType } = require('../../models/log');
 const EmailVerifyToken = require('../../models/email-verify-token').model;
 const config = require('../../config');
 const constants = require('../common/constants');
@@ -46,6 +47,12 @@ const authenticate = async (req, res) => {
             sendUnauthorized(res);
             return ;
         }
+
+        const log = Log({
+            type: LogType.Info,
+            message: `User ${email} has logged in`,
+        });
+        log.save();
 
         res.status(constants.HTTP_CODES.OK).json({
             user: user.safeToSend(true),

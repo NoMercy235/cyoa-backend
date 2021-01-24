@@ -1,9 +1,10 @@
 console.warn('Do not use this for production database!');
 
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-let User = require('../src/models/user').model;
-let config = require('../src/config');
+const User = require('../src/models/user').model;
+const Tag = require('../src/models/tag').model;
+const config = require('../src/config');
 
 // Overriding the deprecated "Promise" module of mongoose.
 // For more information see: https://github.com/Automattic/mongoose/issues/4291
@@ -19,23 +20,41 @@ mongoose.connect(
 
 const adminEmail = 'admin@tta.com';
 
-User.find({ email: adminEmail }).exec().then((data) => {
-    if (!data || !data.length) {
-        let admin = new User({
-            firstName: 'admin',
-            lastName: 'tta',
-            email: adminEmail,
-            password: '123456',
-            isAdmin: true,
-            isActive: true,
-        });
-        console.log('Admin user added successfully');
-        admin.save().then(seedComplete).catch(seedFailed);
-    } else {
+async function addAdmin() {
+    const user = await User.find({ email: adminEmail });
+    if (user) {
         console.log('Admin already exists');
-        seedComplete();
+        return;
     }
-}).catch(seedFailed);
+
+    const admin = new User({
+        firstName: 'admin',
+        lastName: 'tta',
+        email: adminEmail,
+        password: '123456',
+        isAdmin: true,
+        isActive: true,
+    });
+    try {
+        await admin.save();
+        console.log('Admin user added successfully');
+    } catch (e) {
+        seedFailed(e)
+    }
+}
+
+(async function (){
+    await addAdmin();
+
+    const promises = ['Action', 'Adventure', 'Fantasy', 'Drama', 'Mystery', 'Thriller', 'Horror'].map(tagName => {
+        const tag = new Tag({ name: tagName });
+        return tag.save();
+    });
+    await Promise.all(promises);
+
+    seedComplete();
+})();
+
 
 function seedComplete() {
     console.log('===================================');

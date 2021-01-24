@@ -11,6 +11,7 @@ const {
 } = require('../../../scripts/email-sender/email-sender');
 const {
     logError,
+    logInfo,
 } = require('../../models/utils');
 
 const generateToken = () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -43,6 +44,7 @@ const signJwtToken = (user) => {
 };
 
 const logUnknownError = (e) => {
+    console.log(e);
     logError(e.message || 'Unknown Error', JSON.stringify(e));
 };
 
@@ -108,12 +110,14 @@ const register = async (req, res) => {
     const user = User(req.body);
     try {
         await user.save();
+        sendConfirmationEmail(req, user);
         res.status(constants.HTTP_CODES.OK).json({
             user: user.safeToSend(true),
         });
-        await sendConfirmationEmail(req, user);
-    } catch (err) {
-        res.status(constants.HTTP_CODES.BAD_REQUEST).json(err);
+        logInfo(`User ${user.email} has registered`);
+    } catch (e) {
+        logUnknownError(e);
+        res.status(constants.HTTP_CODES.BAD_REQUEST).json(e);
     }
 };
 
@@ -147,10 +151,9 @@ const verifyEmail = async (req, res) => {
             token: signJwtToken(user),
         });
     } catch (e) {
-        console.log(e);
+        logUnknownError(e);
         sendUnauthorized(res);
     }
-
 };
 
 const resendEmail = async (req, res) => {
@@ -179,10 +182,10 @@ const lostPasswordEmail = async (req, res) => {
             destination: email,
         });
         res.sendStatus(constants.HTTP_CODES.OK);
-    } catch (err) {
-        res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
+    } catch (e) {
+        res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(e);
+        logUnknownError(e);
     }
-
 };
 
 const recoverPasswordRequest = async (req, res) => {
@@ -202,14 +205,15 @@ const recoverPasswordRequest = async (req, res) => {
         const user = await User.findOne({ email });
         user.password = password;
         await user.save();
+        logInfo(`User ${user.email} has recovered their password`);
 
         res.status(constants.HTTP_CODES.OK).json({
             user: user.safeToSend(true),
             token: signJwtToken(user),
         });
-    } catch (err) {
-        console.log(err);
-        res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(err);
+    } catch (e) {
+        logUnknownError(e);
+        res.status(constants.HTTP_CODES.INTERNAL_SERVER_ERROR).json(e);
     }
 
 };

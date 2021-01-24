@@ -2,6 +2,7 @@ const BaseController = require('../common/base.controller');
 const Attribute = require('../../models/attribute').model;
 const Player = require('../../models/player').model;
 const Story = require('../../models/story').model;
+const { logInfo } = require('../../models/utils');
 const constants = require('../common/constants');
 
 const findByCb = function (req) {
@@ -88,6 +89,7 @@ async function getOrCreate (req) {
                 lastStorySequence: story.startSeq,
                 attributes: attributes.map(Attribute.forPlayer),
             });
+            logInfo(`Someone started to read ${story.name}(${story._id})`);
         } else {
             playerObj.lastStorySequence = story.startSeq;
             playerObj.attributes = attributes.map(Attribute.forPlayer);

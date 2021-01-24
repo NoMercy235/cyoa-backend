@@ -12,7 +12,7 @@ function handleUniqueError (body) {
 }
 
 function logMessage (type) {
-    return (message, extra) => {
+    return (message, extra = undefined) => {
         const log = Log({
             type,
             message,

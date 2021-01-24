@@ -2,6 +2,7 @@ const BaseController = require('../common/base.controller');
 const Story = require('../../models/story').model;
 const Sequence = require('../../models/sequence').model;
 const Player = require('../../models/player').model;
+const { logInfo } = require('../../models/utils');
 const constants = require('../common/constants');
 
 const findByCb = function (req) {
@@ -14,6 +15,7 @@ storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_CREATE].push((req, item) 
     const { user } = req;
     item.author = user._id;
     item.authorShort = `${user.firstName} ${user.lastName}`;
+    logInfo(`User ${user.email}(${user._id}) has created the story ${item.name}`)
 });
 
 storyCtrl.callbacks[constants.HTTP_TIMED_EVENTS.BEFORE_GET].push((req, query) => {

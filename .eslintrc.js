@@ -17,6 +17,7 @@ module.exports = {
         "init-declarations": "off",
         "no-console": "off",
         "no-inline-comments": "off",
+        "no-unused-vars": "off",
     },
     "parserOptions": {
         "ecmaVersion": 8,

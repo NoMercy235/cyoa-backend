@@ -63,7 +63,7 @@ schema.statics.updateFields = function (fields) {
 schema.path('email').validate({
     validator: function (value) {
         return new Promise(resolve => {
-           if (this._id) resolve();
+            if (this._id) resolve();
             this.model(MODEL).count({ email: value }, (err, count) => {
                 if (err) {
                     return resolve(err);

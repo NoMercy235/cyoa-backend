@@ -19,7 +19,7 @@ async function getUserOverview ({ params: { id: userId } }) {
     });
     return {
         user: user.safeToSend(),
-        storiesWritten
+        storiesWritten,
     }
 }
 

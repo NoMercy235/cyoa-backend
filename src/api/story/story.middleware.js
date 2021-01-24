@@ -1,5 +1,6 @@
 const constants = require('../common/constants');
 const Story = require('../../models/story').model;
+const BaseController = require('../common/base.controller');
 
 const isStoryPublished = (findByCb) => {
     return async (req, res, next) => {

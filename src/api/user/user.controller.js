@@ -41,7 +41,7 @@ function getUserWithToken (req, res) {
 async function uploadProfilePicture (req) {
     const {
         user,
-        body: { profile }
+        body: { profile },
     } = req;
 
     const path = base64Img.imgSync(

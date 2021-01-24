@@ -58,7 +58,7 @@ httpServer.listen(port, () => {
     console.log(`HTTP Server started on port: ${port}`);
 });
 
-ioServer = io(httpServer, { origins: allowedOrigins });
+const ioServer = io(httpServer, { origins: allowedOrigins });
 ioServer.on(SocketEvents.Connection, handleSocket);
 
 // HTTPS server config

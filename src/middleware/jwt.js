@@ -10,7 +10,7 @@ let jwtConfig = jwt({
             return token.split(' ')[1];
         }
         return null;
-    }
+    },
 }).unless({path: ['/api/', /\/auth.+$/g]});
 
 module.exports = (() => {

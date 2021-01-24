@@ -7,7 +7,7 @@ const constants = require('../common/constants');
 const {
     sendEmailVerifyEmail,
     sendForgotPasswordEmail,
-    resetPasswordTokens
+    resetPasswordTokens,
 } = require('../../../scripts/email-sender/email-sender');
 const {
     logError,
@@ -100,7 +100,7 @@ const register = async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
         res.status(constants.HTTP_CODES.CONFLICT).json({
-            message: 'Email is already registered'
+            message: 'Email is already registered',
         });
         return ;
     }
@@ -109,7 +109,7 @@ const register = async (req, res) => {
     try {
         await user.save();
         res.status(constants.HTTP_CODES.OK).json({
-            user: user.safeToSend(true)
+            user: user.safeToSend(true),
         });
         await sendConfirmationEmail(req, user);
     } catch (err) {
@@ -144,7 +144,7 @@ const verifyEmail = async (req, res) => {
         res.status(constants.HTTP_CODES.OK).json({
             emailVerifyToken,
             user,
-            token: signJwtToken(user)
+            token: signJwtToken(user),
         });
     } catch (e) {
         console.log(e);
@@ -176,7 +176,7 @@ const lostPasswordEmail = async (req, res) => {
 
         await sendForgotPasswordEmail({
             token: passwordToken,
-            destination: email
+            destination: email,
         });
         res.sendStatus(constants.HTTP_CODES.OK);
     } catch (err) {

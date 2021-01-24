@@ -15,11 +15,11 @@ async function setRating (req) {
     let ratingObj = await Rating.findOne(query);
 
     if (!ratingObj) {
-       ratingObj = new Rating({
-           rating,
-           user: userId,
-           story: storyId,
-       });
+        ratingObj = new Rating({
+            rating,
+            user: userId,
+            story: storyId,
+        });
     } else {
         ratingObj.rating = rating;
     }

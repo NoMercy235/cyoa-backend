@@ -67,7 +67,7 @@ const handleRemoveSequence = socket => async ({ storyId, sequenceId }) => {
                 $or: [
                     { nextSeq: sequenceId },
                     { sequence: sequenceId },
-                ]
+                ],
             },
         );
         const story = await Story.findOne({ _id: storyId });

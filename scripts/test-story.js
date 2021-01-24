@@ -144,6 +144,8 @@ async function createOptions (story, seqArr, attributes) {
                             nextSeq: randomElFromArr(seqRow)._id,
                             consequences: createConsequences(attributes),
                         });
+                        sequence.options.push(option._id);
+                        await sequence.save();
                         return await option.save();
                     }))
             })

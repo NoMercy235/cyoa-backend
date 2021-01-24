@@ -13,6 +13,7 @@ const {
     logError,
     logInfo,
 } = require('../../models/utils');
+const { createStoryForUser } = require('./demo-story');
 
 const generateToken = () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
@@ -114,6 +115,7 @@ const register = async (req, res) => {
         res.status(constants.HTTP_CODES.OK).json({
             user: user.safeToSend(true),
         });
+        createStoryForUser(user);
         logInfo(`User ${user.email} has registered`);
     } catch (e) {
         logUnknownError(e);

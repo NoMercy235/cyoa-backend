@@ -1,5 +1,3 @@
-version: '2'
-
 services:
     cyoa-backend-db:
         image: "mongo:4.2"
